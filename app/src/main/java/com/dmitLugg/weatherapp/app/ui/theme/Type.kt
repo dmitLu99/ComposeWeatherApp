@@ -1,4 +1,4 @@
-package com.dmitLugg.weatherapp.ui.theme
+package com.dmitLugg.weatherapp.app.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

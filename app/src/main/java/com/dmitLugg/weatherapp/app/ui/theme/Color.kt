@@ -1,4 +1,4 @@
-package com.dmitLugg.weatherapp.ui.theme
+package com.dmitLugg.weatherapp.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

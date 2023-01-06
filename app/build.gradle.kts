@@ -51,6 +51,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
     implementation("androidx.activity:activity-compose:1.6.1")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.28.0")
 
     val composeVersion  = "1.2.1"
 
