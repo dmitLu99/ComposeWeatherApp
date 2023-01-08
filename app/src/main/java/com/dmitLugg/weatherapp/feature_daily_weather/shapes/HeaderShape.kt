@@ -16,15 +16,15 @@ class HeaderShape : Shape {
         density: Density
     ): Outline {
         val path = Path().apply {
-            addRect(Rect(
-                Offset(0f, 0f),
-                Offset(size.width, size.height / 4)
-            ))
+//            addRect(Rect(
+//                Offset(0f, 0f),
+//                Offset(size.width, size.height / 3.5f)
+//            ))
             addArcRad(
                 Rect(
                     Offset(0f - size.width * 0.1f, 0 - size.height * 0.5f),
                     Offset(size.width * 1.1f, size.height * 1f)
-                ),0f, Math.PI.toFloat()
+                ),0f, 2 * Math.PI.toFloat()
             )
 
 

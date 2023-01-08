@@ -28,7 +28,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 @[Preview(showBackground = true) Composable]
-fun MainScreen() {
+fun MainScreen(onNavigateToDailyWeather: () -> Unit = {}) {
 
     var offset by remember { mutableStateOf(0f) }
     Column(
@@ -76,17 +76,16 @@ fun MainScreen() {
             }
 
         }
-
-
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(2f, fill = false), contentAlignment = Alignment.Center
         ) {
-            HourlyWeather(hourlyWeatherList = List(size = 23) { index ->
-                HourlyWeather(time = LocalTime.of(index, 0).toString(), "", index.toString())
-            })
+            HourlyWeather(
+                onNavigateToDailyWeather = onNavigateToDailyWeather,
+                hourlyWeatherList = List(size = 23) { index ->
+                    HourlyWeather(time = LocalTime.of(index, 0).toString(), "", index.toString())
+                })
         }
 
     }

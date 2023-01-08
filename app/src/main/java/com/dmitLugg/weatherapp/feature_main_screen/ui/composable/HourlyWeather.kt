@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.dmitLugg.weatherapp.feature_main_screen.ui.models.HourlyWeather
 
 @Composable
-fun HourlyWeather(hourlyWeatherList: List<HourlyWeather>) {
+fun HourlyWeather(hourlyWeatherList: List<HourlyWeather>, onNavigateToDailyWeather: () -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }
 
     Box(modifier = Modifier.fillMaxHeight()) {
@@ -41,10 +41,14 @@ fun HourlyWeather(hourlyWeatherList: List<HourlyWeather>) {
                 }
                 Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.End) {
 
-                    Row(modifier = Modifier.clickable(
-                        interactionSource = interactionSource,
-                        indication = rememberRipple(bounded = false)
-                    ) { }, verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier = Modifier.clickable(
+                            interactionSource = interactionSource,
+                            indication = rememberRipple(bounded = false),
+                            onClick = onNavigateToDailyWeather
+                        ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(text = "Week", fontSize = 20.sp)
                         Icon(
                             imageVector = Icons.Filled.KeyboardArrowRight,
