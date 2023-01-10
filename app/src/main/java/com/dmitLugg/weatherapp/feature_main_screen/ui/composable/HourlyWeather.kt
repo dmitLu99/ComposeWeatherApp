@@ -74,8 +74,6 @@ fun HourlyWeather(hourlyWeatherList: List<HourlyWeather>, onNavigateToDailyWeath
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))
-
-
         }
     }
 
