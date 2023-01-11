@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">ComposeWeatherApp</string>
+    <string name="today">Today</string>
+    <string name="week">Week</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+    <string name="apparent_temperature">Apparent temperature</string>
+    <string name="wind">Wind</string>
+    <string name="precipitation_sum">Precipitation sum</string>
+    <string name="clear_sky">Clear sky</string>
+    <string name="on_this_week">On This Week</string>
+
+    <string name="celsius">°C</string>
+    <string name="fahrenheit">°F</string>
+    <string name="kilometres_per_hour">km/h</string>
+    <string name="metres_per_second">m/s</string>
+    <string name="miles_per_hour">mph</string>
+    <string name="knots">kn</string>
+    <string name="millimeter">mm</string>
+    <string name="inch">″</string>
 </resources>

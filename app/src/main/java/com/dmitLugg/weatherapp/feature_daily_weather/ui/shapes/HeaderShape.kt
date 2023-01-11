@@ -1,4 +1,4 @@
-package com.dmitLugg.weatherapp.feature_daily_weather.shapes
+package com.dmitLugg.weatherapp.feature_daily_weather.ui.shapes
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect

@@ -1,4 +1,4 @@
-package com.dmitLugg.weatherapp.core
+package com.dmitLugg.weatherapp.core.utils
 
 object Config {
 
