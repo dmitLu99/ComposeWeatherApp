@@ -1,5 +1,7 @@
 package com.dmitLugg.weatherapp.feature_daily_weather.ui.screen
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -9,7 +11,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -26,51 +27,25 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dmitLugg.weatherapp.R
 import com.dmitLugg.weatherapp.core.ui.composable.HourlyItem
 import com.dmitLugg.weatherapp.core.ui.composable.TextRow
 import com.dmitLugg.weatherapp.core.ui.composable.VerticalDivider
 import com.dmitLugg.weatherapp.feature_daily_weather.ui.shapes.HeaderShape
 import com.dmitLugg.weatherapp.feature_main_screen.ui.models.Date
-import com.dmitLugg.weatherapp.core.ui.models.HourlyWeather
-import com.dmitLugg.weatherapp.core.ui.models.Units
-import com.dmitLugg.weatherapp.core.ui.models.UnitsOfMeasurement
 import com.dmitLugg.weatherapp.feature_daily_weather.ui.models.DailyWeather
+import com.dmitLugg.weatherapp.feature_daily_weather.ui.view_models.DailyWeatherViewModel
 import com.dmitLugg.weatherapp.feature_main_screen.ui.models.Location
-import java.time.LocalTime
 
 @[Preview(showBackground = true) Composable]
 fun DailyWeatherScreen(onNavigateBack: () -> Unit = {}) {
 
     val location = Location("Russia", "Volgograd")
 
-    val hourlyWeatherList = List(size = 23) { index ->
-        HourlyWeather(
-            time = LocalTime.of(index, 0).toString(),
-            R.drawable.ic_person_outlined,
-            index.toString()
-        )
-    }
-    val unitsOfMeasurement = UnitsOfMeasurement(
-        temperatureUnit = Units.TemperatureUnits.CELSIUS,
-        windSpeedUnit = Units.WindSpeedUnits.METRES_PER_SECOND,
-        precipitationUnit = Units.PrecipitationUnits.MILLIMETER
-    )
-    val dailyWeather = DailyWeather(
-        descriptionResId = R.string.clear_sky,
-        iconResId = R.drawable.ic_person_outlined,
-        temperatureMax = -17,
-        temperatureMin = -22,
-        sunrise = "7:40",
-        sunset = "18:21",
-        apparentTemperatureMin = -26,
-        apparentTemperatureMax = -19,
-        windSpeed = 1.3,
-        windDirectionIconResId = R.drawable.ic_person_outlined,
-        precipitationSum = 123,
-        hourlyWeather = hourlyWeatherList,
-        unitsOfMeasurement = unitsOfMeasurement
-    )
+    val viewModel: DailyWeatherViewModel = viewModel()
+//    val dailyWeather = remember { mutableStateOf(viewModel.data) }
+
     Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             Surface(
@@ -109,7 +84,7 @@ fun DailyWeatherScreen(onNavigateBack: () -> Unit = {}) {
             Divider()
         }
 
-        DailyWeather(dailyWeather = dailyWeather)
+//        DailyWeather(dailyWeather = viewModel.data)
     }
 }
 
@@ -156,6 +131,9 @@ fun Header() {
 
 @Composable
 fun Calendar(days: List<Date>, fontSize: TextUnit = 20.sp) {
+
+    val viewModel = viewModel<DailyWeatherViewModel>()
+
     Column {
         Row(
             modifier = Modifier
@@ -214,15 +192,14 @@ fun TopDailyWeather(
     Row(
         modifier = modifier
             .height(80.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
+            .fillMaxWidth()
+            .padding(horizontal = 30.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
-
         Column(
             modifier = Modifier
-                .fillMaxHeight(),
+                .fillMaxHeight()
+                .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
@@ -240,7 +217,9 @@ fun TopDailyWeather(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.fillMaxHeight()
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f)
         ) {
             Text(
                 text = "${dailyWeather.temperatureMin}° / ${dailyWeather.temperatureMax}°",
@@ -280,7 +259,7 @@ fun BottomDailyWeather(dailyWeather: DailyWeather) {
             Text(
                 text = "${dailyWeather.windSpeed} ${
                     stringResource(
-                        id = dailyWeather.unitsOfMeasurement.windSpeedUnit.stringResId
+                        id = dailyWeather.unitsOfMeasurementResId.windSpeedUnitResId
                     )
                 }",
                 modifier = Modifier
@@ -292,34 +271,39 @@ fun BottomDailyWeather(dailyWeather: DailyWeather) {
         Text(
             text = "${dailyWeather.precipitationSum} ${
                 stringResource(
-                    id = dailyWeather.unitsOfMeasurement.precipitationUnit.stringResId
+                    id = dailyWeather.unitsOfMeasurementResId.precipitationUnitResId
                 )
             }"
         )
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun DailyWeather(dailyWeather: DailyWeather) {
-    Column(
-        verticalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier.fillMaxSize()
-    ) {
 
-        TopDailyWeather(dailyWeather = dailyWeather)
+    AnimatedContent(targetState = dailyWeather) {
+        Column(
+            verticalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxSize()
+        ) {
 
-        Divider()
+            TopDailyWeather(dailyWeather = dailyWeather)
 
-        LazyRow {
-            items(dailyWeather.hourlyWeather) { hourlyWeather ->
-                HourlyItem(hourlyWeather = hourlyWeather)
+            Divider()
+
+            LazyRow {
+                items(dailyWeather.hourlyWeather) { hourlyWeather ->
+                    HourlyItem(hourlyWeather = hourlyWeather)
+                }
             }
+
+            Divider()
+
+            BottomDailyWeather(dailyWeather = dailyWeather)
+
+            Spacer(modifier = Modifier.height(10.dp))
         }
-
-        Divider()
-
-        BottomDailyWeather(dailyWeather = dailyWeather)
-
-        Spacer(modifier = Modifier.height(10.dp))
     }
+
 }

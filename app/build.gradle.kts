@@ -54,6 +54,12 @@ dependencies {
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.28.0")
     implementation("androidx.navigation:navigation-compose:2.5.3")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+
+    implementation("androidx.activity:activity-ktx:1.6.1")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+
     val composeVersion  = "1.2.1"
 
     implementation("androidx.compose.ui:ui:$composeVersion")

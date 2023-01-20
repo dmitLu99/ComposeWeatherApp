@@ -5,8 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.dmitLugg.weatherapp.core.utils.Config.DAILY_WEATHER_SCREEN
-import com.dmitLugg.weatherapp.core.utils.Config.MAIN_SCREEN
+import com.dmitLugg.weatherapp.core.utils.Config.NAVIGATION.DAILY_WEATHER_SCREEN
+import com.dmitLugg.weatherapp.core.utils.Config.NAVIGATION.MAIN_SCREEN
 import com.dmitLugg.weatherapp.feature_daily_weather.ui.screen.DailyWeatherScreen
 import com.dmitLugg.weatherapp.feature_main_screen.ui.screen.MainScreen
 

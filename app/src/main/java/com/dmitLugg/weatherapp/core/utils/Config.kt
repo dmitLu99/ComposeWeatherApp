@@ -2,10 +2,14 @@ package com.dmitLugg.weatherapp.core.utils
 
 object Config {
 
-    // Log
-    const val UI_LOGGER = "UILogger"
+    object LOG {
 
-    // Navigation
-    const val MAIN_SCREEN = "mainScreen"
-    const val DAILY_WEATHER_SCREEN = "dailyWeatherScreen"
+        const val UI_LOG_TAG = "UILogger"
+    }
+
+    object NAVIGATION {
+
+        const val MAIN_SCREEN = "mainScreen"
+        const val DAILY_WEATHER_SCREEN = "dailyWeatherScreen"
+    }
 }

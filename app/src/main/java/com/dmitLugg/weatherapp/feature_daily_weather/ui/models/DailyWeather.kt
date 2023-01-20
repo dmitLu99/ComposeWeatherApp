@@ -1,7 +1,7 @@
 package com.dmitLugg.weatherapp.feature_daily_weather.ui.models
 
 import com.dmitLugg.weatherapp.core.ui.models.HourlyWeather
-import com.dmitLugg.weatherapp.core.ui.models.UnitsOfMeasurement
+import com.dmitLugg.weatherapp.core.ui.models.UnitsOfMeasurementResId
 
 data class DailyWeather(
     val descriptionResId: Int,
@@ -16,5 +16,5 @@ data class DailyWeather(
     val windDirectionIconResId: Int,
     val precipitationSum: Int,
     val hourlyWeather: List<HourlyWeather>,
-    val unitsOfMeasurement: UnitsOfMeasurement
+    val unitsOfMeasurementResId: UnitsOfMeasurementResId
 )

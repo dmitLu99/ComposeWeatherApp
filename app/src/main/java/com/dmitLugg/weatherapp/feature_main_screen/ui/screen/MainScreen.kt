@@ -25,18 +25,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dmitLugg.weatherapp.R
 import com.dmitLugg.weatherapp.core.ui.composable.HourlyItem
 import com.dmitLugg.weatherapp.feature_main_screen.ui.models.CurrentWeather
 import com.dmitLugg.weatherapp.core.ui.models.HourlyWeather
 import com.dmitLugg.weatherapp.feature_main_screen.ui.models.Location
 import com.dmitLugg.weatherapp.feature_main_screen.ui.shapes.CustomShape
+import com.dmitLugg.weatherapp.feature_main_screen.ui.view_models.MainScreenViewModel
 import java.time.LocalDate
 import java.time.LocalTime
 
-@OptIn(ExperimentalMaterial3Api::class)
-@[Preview(showBackground = true) Composable]
+@[OptIn(ExperimentalMaterial3Api::class) Preview(showBackground = true) Composable]
 fun MainScreen(onNavigateToDailyWeather: () -> Unit = {}) {
+
+//    val viewModel: MainScreenViewModel = viewModel()
 
     val topAppBarColors = TopAppBarDefaults.topAppBarColors(
         containerColor = Color.Transparent,
