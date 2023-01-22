@@ -2,6 +2,7 @@ package com.loodmeet.weatherapp.ui.main_screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Person
@@ -9,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -36,21 +38,21 @@ val hourlyWeather =
 val dailyWeather = DailyWeather(
     descriptionResId = R.string.clear_sky,
     iconResId = R.drawable.ic_person_outlined,
-    temperatureMax = 1,
-    temperatureMin = 1,
-    sunrise = "1",
-    sunset = "1",
-    apparentTemperatureMax = 1,
-    apparentTemperatureMin = 1,
-    windSpeed = 1.1,
+    temperatureMax = 10,
+    temperatureMin = 10,
+    sunrise = "10:10",
+    sunset = "10:10",
+    apparentTemperatureMax = 10,
+    apparentTemperatureMin = 10,
+    windSpeed = 10.1,
     windDirectionIconResId = R.drawable.ic_person_outlined,
-    precipitationSum = 1,
+    precipitationSum = 10,
     hourlyWeather = listOf(hourlyWeather),
     unitsOfMeasurementResIds = units
 )
 
 @Composable
-fun Screen(index: Int) {
+fun Screen() {
 
     val dividerModifier = Modifier.fillMaxWidth(1f)
 
@@ -64,14 +66,17 @@ fun Screen(index: Int) {
         ) {
 
             Card(
+
 //                elevation = CardDefaults.cardElevation(6.dp),
                 modifier = Modifier
                     .weight(1f)
-                    .padding(vertical = 20.dp),
+                    .padding(vertical = 30.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
             ) {
                 TopDailyWeather(
                     dailyWeather = dailyWeather,
-                    modifier = Modifier.padding(10.dp)
+                    modifier = Modifier
+                        .padding(vertical = 40.dp)
                 )
             }
 //            Divider(dividerModifier)
@@ -100,7 +105,6 @@ fun Screen(index: Int) {
 @Composable
 fun TopDailyWeather(
     modifier: Modifier = Modifier,
-    temperatureFontSize: TextUnit = 25.sp,
     iconSize: Dp = 48.dp,
     dailyWeather: DailyWeather
 ) {
@@ -119,10 +123,14 @@ fun TopDailyWeather(
                 modifier = Modifier
                     .size(iconSize)
             )
-            Text(text = stringResource(id = dailyWeather.descriptionResId), modifier = Modifier)
+            Text(
+                text = stringResource(id = dailyWeather.descriptionResId),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
+            )
         }
 
-        VerticalDivider(horizontalPadding = 20.dp, verticalPadding = 10.dp)
+        VerticalDivider(horizontalPadding = 0.dp, verticalPadding = 10.dp)
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -132,7 +140,8 @@ fun TopDailyWeather(
         ) {
             Text(
                 text = "${dailyWeather.temperatureMin}° / ${dailyWeather.temperatureMax}°",
-                fontSize = temperatureFontSize
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
 
@@ -154,7 +163,9 @@ fun SunriseAndSunset(modifier: Modifier = Modifier) {
         LinearProgressIndicator(
             progress = 0.6f,
             modifier = Modifier
-                .fillMaxWidth(fraction = 0.8f)
+                .fillMaxWidth(fraction = 0.85f)
+                .height(4.dp)
+                .clip(RoundedCornerShape(5.dp))
         )
     }
 }

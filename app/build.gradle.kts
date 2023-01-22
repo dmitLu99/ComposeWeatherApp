@@ -61,8 +61,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
 
     // Pager
-    implementation("com.google.accompanist:accompanist-pager:0.25.0")
-    implementation("com.google.accompanist:accompanist-pager-indicators:0.25.0")
+    implementation("com.google.accompanist:accompanist-pager:0.29.0-alpha")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.29.0-alpha")
 
     val composeVersion  = "1.2.1"
 

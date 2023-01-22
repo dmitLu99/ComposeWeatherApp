@@ -17,31 +17,43 @@ import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFF8dabbb),
-    secondary = PurpleGrey80,
-    tertiary = Pink80,
+    primary = Color(0xFF7fd0ff),
+    secondary = Color(0xFFb6c9d8),
+    tertiary = Color(0xFFcbc1e9),
 
-    background = Color(0xFFedf0f2),
-    surface = Color.White,
-    onPrimary = Color.Black,
-    onSecondary = Color.Black,
-    onTertiary = Color.White,
-    onBackground = Color(0xFFFFFBFE),
-    onSurface = Color(0xFFFFFBFE),
+    background = Color(0xFF191c1e),
+    surface = Color(0xFF191c1e),
+    onPrimary = Color(0xFF00344a),
+    onSecondary = Color(0xFF20333e),
+    onTertiary = Color(0xFF322c4c),
+    onBackground = Color(0xFFe1e2e5),
+    onSurface = Color(0xFFe1e2e5),
+    primaryContainer = Color(0xFF004c6a),
+    secondaryContainer = Color(0xFF374955),
+    onSecondaryContainer = Color(0xFFd1e5f4),
+//    onSurfaceVariant = Color(0xFFc1c7ce)
+    onSurfaceVariant = Color(0xFFdde3ea)
+
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF8dabbb),
-    secondary = PurpleGrey40,
-    tertiary = Pink40,
+    primary = Color(0xFF006685),
+    secondary = Color(0xFF8dabbb),
+    tertiary = Color(0xFF5d5b7d),
 
-    background = Color(0xFFedf0f2),
+    background = Color.White,
     surface = Color(0xFFFFFBFE),
     onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
+    onSecondary = Color.Black,
+    onTertiary = Color.Black,
     onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFFFFFBFE),
+    onSurface = Color.Black,
+    primaryContainer = Color(0xFFcee5ff),
+    secondaryContainer = Color(0xFFd1e5f4),
+    onSecondaryContainer = Color(0xFF001f2a),
+//    onSurfaceVariant = Color(0xFF41484d)
+            onSurfaceVariant = Color(0xFF41484d)
+
     /**/
 )
 
