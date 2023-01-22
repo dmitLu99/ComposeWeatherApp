@@ -17,18 +17,19 @@ fun AppNavHost(
 ) {
     NavHost(navController = navController, startDestination = startDestination) {
         composable(MAIN_SCREEN) {
-            MainScreen(onNavigateToDailyWeather = {
-                navController.navigate(
-                    DAILY_WEATHER_SCREEN
-                )
-            })
+//            MainScreen(onNavigateToDailyWeather = {
+//                navController.navigate(
+//                    DAILY_WEATHER_SCREEN
+//                )
+//            })
+            com.loodmeet.weatherapp.ui.main_screen.MainScreen()
         }
-        composable(DAILY_WEATHER_SCREEN) {
-            DailyWeatherScreen(
-                onNavigateBack = {
-                    navController.popBackStack()
-                }
-            )
-        }
+//        composable(DAILY_WEATHER_SCREEN) {
+//            DailyWeatherScreen(
+//                onNavigateBack = {
+//                    navController.popBackStack()
+//                }
+//            )
+//        }
     }
 }

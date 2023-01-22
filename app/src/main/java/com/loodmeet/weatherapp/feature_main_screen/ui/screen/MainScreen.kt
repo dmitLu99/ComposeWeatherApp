@@ -39,72 +39,72 @@ fun MainScreen(onNavigateToDailyWeather: () -> Unit = {}) {
 
 //    val viewModel: MainScreenViewModel = viewModel()
 
-    val topAppBarColors = TopAppBarDefaults.topAppBarColors(
-        containerColor = Color.Transparent,
-        titleContentColor = MaterialTheme.colorScheme.onTertiary,
-        navigationIconContentColor = MaterialTheme.colorScheme.onTertiary,
-        actionIconContentColor = MaterialTheme.colorScheme.onTertiary
-    )
-
-    val location = Location("Russia", "Volgograd")
-
-    val currentWeather = CurrentWeather(
-        LocalDate.now().toString(),
-        temperature = "19",
-        description = "cloudy"
-    )
-
-    val hourlyWeatherList = List(size = 23) { index ->
-        HourlyWeather(
-            time = LocalTime.of(index, 0).toString(),
-            R.drawable.ic_person_outlined,
-            index.toString()
-        )
-    }
-
-    val topShape = CustomShape()
-
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(5f),
-            shadowElevation = 6.dp,
-            shape = topShape
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.main_bg7),
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
-
-            Column {
-
-                AppBar(location = location, colors = topAppBarColors)
-
-                CurrentWeather(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(top = 25.dp),
-                    currentWeather = currentWeather
-                )
-            }
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(2f),
-            contentAlignment = Alignment.Center
-        ) {
-            HourlyWeather(
-                onNavigateToDailyWeather = onNavigateToDailyWeather,
-                hourlyWeatherList = hourlyWeatherList
-            )
-        }
-    }
+//    val topAppBarColors = TopAppBarDefaults.topAppBarColors(
+//        containerColor = Color.Transparent,
+//        titleContentColor = MaterialTheme.colorScheme.onTertiary,
+//        navigationIconContentColor = MaterialTheme.colorScheme.onTertiary,
+//        actionIconContentColor = MaterialTheme.colorScheme.onTertiary
+//    )
+//
+//    val location = Location("Russia", "Volgograd")
+//
+//    val currentWeather = CurrentWeather(
+//        LocalDate.now().toString(),
+//        temperature = "19",
+//        description = "cloudy"
+//    )
+//
+//    val hourlyWeatherList = List(size = 23) { index ->
+//        HourlyWeather(
+//            time = LocalTime.of(index, 0).toString(),
+//            R.drawable.ic_person_outlined,
+//            index.toString()
+//        )
+//    }
+//
+//    val topShape = CustomShape()
+//
+//    Column(
+//        modifier = Modifier.fillMaxSize()
+//    ) {
+//
+//        Surface(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .weight(5f),
+//            shadowElevation = 6.dp,
+//            shape = topShape
+//        ) {
+//            Image(
+//                painter = painterResource(id = R.drawable.main_bg7),
+//                contentDescription = null,
+//                contentScale = ContentScale.Crop
+//            )
+//
+//            Column {
+//
+//                AppBar(location = location, colors = topAppBarColors)
+//
+//                CurrentWeather(
+//                    modifier = Modifier
+//                        .weight(1f)
+//                        .padding(top = 25.dp),
+//                    currentWeather = currentWeather
+//                )
+//            }
+//        }
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .weight(2f),
+//            contentAlignment = Alignment.Center
+//        ) {
+//            HourlyWeather(
+//                onNavigateToDailyWeather = onNavigateToDailyWeather,
+//                hourlyWeatherList = hourlyWeatherList
+//            )
+//        }
+//    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

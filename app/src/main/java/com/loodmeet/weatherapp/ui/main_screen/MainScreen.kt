@@ -44,52 +44,39 @@ import com.loodmeet.weatherapp.core.ui.models.UnitsOfMeasurementResIds
 import com.loodmeet.weatherapp.feature_daily_weather.ui.models.DailyWeather
 import kotlinx.coroutines.launch
 
-class MainActivity : ComponentActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContent {
-            ComposeWeatherAppTheme {
-
-
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun MainScreen() {
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
     val scope = rememberCoroutineScope()
-    BottomSheetScaffold(
-        topBar = {
-            TopAppBar {
-                scope.launch {
-                    if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {
-                        bottomSheetScaffoldState.bottomSheetState.expand()
-                    } else {
-                        bottomSheetScaffoldState.bottomSheetState.collapse()
-                    }
-                }
-            }
-        },
+    val state = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    ModalBottomSheetLayout(
         sheetContent = {
             BottomSheetContent()
         },
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-        sheetBackgroundColor = Color.Green,
-        scaffoldState = bottomSheetScaffoldState,
-    ) { innerPadding ->
-
-        Column(Modifier.padding(innerPadding)) {
-            Tabs()
+        sheetState = state,
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar {
+                    scope.launch {
+                        if (state.isVisible) {
+                            state.hide()
+                        } else {
+                            state.show()
+                        }
+                    }
+                }
+            },
+        ) { innerPadding ->
+            Column(Modifier.padding(innerPadding)) {
+                Tabs()
+            }
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -158,7 +145,8 @@ fun Tabs() {
                         Text(
                             text = tab.title,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = if (pagerState.currentPage == index) Color.Black else Color.Blue
+                            color = if (pagerState.currentPage == index)
+                                MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     },
                     selected = pagerState.currentPage == index,
@@ -170,7 +158,11 @@ fun Tabs() {
                     modifier = Modifier
                         .padding(horizontal = 3.dp, vertical = 6.dp)
                         .clip(RoundedCornerShape(30.dp))
-                        .background(if (pagerState.currentPage == index) Color.Cyan else Color.LightGray)
+                        .background(
+                            if (pagerState.currentPage == index)
+                                MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.secondaryContainer
+                        )
                 )
             }
         }

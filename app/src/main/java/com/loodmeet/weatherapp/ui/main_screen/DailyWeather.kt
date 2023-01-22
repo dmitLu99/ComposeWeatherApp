@@ -56,26 +56,42 @@ fun Screen(index: Int) {
 
     Surface {
         Column(
-            modifier = Modifier.fillMaxSize().padding(30.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp),
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Surface(
+            Card(
+//                elevation = CardDefaults.cardElevation(6.dp),
                 modifier = Modifier
                     .weight(1f)
-                    .padding(vertical = 30.dp)
+                    .padding(vertical = 20.dp),
             ) {
-                TopDailyWeather(dailyWeather = dailyWeather)
+                TopDailyWeather(
+                    dailyWeather = dailyWeather,
+                    modifier = Modifier.padding(10.dp)
+                )
             }
-            Divider(dividerModifier)
-            SunriseAndSunset(modifier = Modifier.weight(0.5f))
-            Divider(dividerModifier)
-            ApparentTemperature(modifier = Modifier.weight(0.5f))
-            Divider(dividerModifier)
-            Wind(modifier = Modifier.weight(0.5f))
-            Divider(dividerModifier)
-            PrecipitationSum(modifier = Modifier.weight(0.5f))
+//            Divider(dividerModifier)
+            Surface(
+//                elevation = CardDefaults.cardElevation(6.dp),
+                modifier = Modifier
+                    .weight(1.5f)
+            ) {
+                Column(modifier = Modifier.padding(20.dp)) {
+                    SunriseAndSunset(modifier = Modifier.weight(0.5f))
+                    Divider(dividerModifier)
+                    ApparentTemperature(modifier = Modifier.weight(0.5f))
+                    Divider(dividerModifier)
+                    Wind(modifier = Modifier.weight(0.5f))
+                    Divider(dividerModifier)
+                    PrecipitationSum(modifier = Modifier.weight(0.5f))
+                }
+
+            }
+
         }
     }
 
