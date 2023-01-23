@@ -1,6 +1,5 @@
 package com.loodmeet.weatherapp.ui.main_screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -14,18 +13,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.dmitLugg.weatherapp.R
 import com.loodmeet.weatherapp.core.ui.composable.TextRow
 import com.loodmeet.weatherapp.core.ui.composable.VerticalDivider
 import com.loodmeet.weatherapp.core.ui.models.Units
 import com.loodmeet.weatherapp.core.ui.models.UnitsOfMeasurementResIds
 import com.loodmeet.weatherapp.feature_daily_weather.ui.models.DailyWeather
-
 
 val units = UnitsOfMeasurementResIds(
     temperatureUnitResId = Units.TemperatureUnits.CELSIUS,
@@ -56,7 +51,7 @@ fun Screen() {
 
     val dividerModifier = Modifier.fillMaxWidth(1f)
 
-    Surface {
+    Surface(color = Color.Transparent, contentColor = MaterialTheme.colorScheme.onBackground) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -65,13 +60,12 @@ fun Screen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Card(
-
-//                elevation = CardDefaults.cardElevation(6.dp),
+            ElevatedCard(
                 modifier = Modifier
                     .weight(1f)
                     .padding(vertical = 30.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                elevation = CardDefaults.cardElevation(6.dp)
             ) {
                 TopDailyWeather(
                     dailyWeather = dailyWeather,
@@ -79,9 +73,8 @@ fun Screen() {
                         .padding(vertical = 40.dp)
                 )
             }
-//            Divider(dividerModifier)
             Surface(
-//                elevation = CardDefaults.cardElevation(6.dp),
+                color = Color.Transparent,
                 modifier = Modifier
                     .weight(1.5f)
             ) {
@@ -211,7 +204,7 @@ fun Wind(modifier: Modifier = Modifier) {
 fun PrecipitationSum(modifier: Modifier = Modifier) {
 
     TextRow(modifier = modifier) {
-        Text(text = stringResource(R.string.precipitation_sum))
+        Text(text = "${stringResource(R.string.precipitation_sum)}:")
         Text(
             text = "${dailyWeather.precipitationSum} ${
                 stringResource(

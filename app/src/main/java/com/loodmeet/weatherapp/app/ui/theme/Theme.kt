@@ -17,51 +17,46 @@ import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFF7fd0ff),
+    primary = Color(0xFF8ecdff),
     secondary = Color(0xFFb6c9d8),
     tertiary = Color(0xFFcbc1e9),
-
     background = Color(0xFF191c1e),
-    surface = Color(0xFF191c1e),
-    onPrimary = Color(0xFF00344a),
+    surface = Color(0xFF001f2a),
+    onPrimary = Color(0xFF00344f),
     onSecondary = Color(0xFF20333e),
     onTertiary = Color(0xFF322c4c),
     onBackground = Color(0xFFe1e2e5),
-    onSurface = Color(0xFFe1e2e5),
+    onSurface = Color(0xFFbfe9ff),
     primaryContainer = Color(0xFF004c6a),
-    secondaryContainer = Color(0xFF374955),
+    secondaryContainer = Color(0xFF161c22),
     onSecondaryContainer = Color(0xFFd1e5f4),
-//    onSurfaceVariant = Color(0xFFc1c7ce)
-    onSurfaceVariant = Color(0xFFdde3ea)
-
+    onSurfaceVariant = Color(0xFFdde3ea),
+    tertiaryContainer = Color(0xFF41474d),
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF006685),
+    primary = Color(0xFF006494),
     secondary = Color(0xFF8dabbb),
     tertiary = Color(0xFF5d5b7d),
-
     background = Color.White,
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
+    surface = Color(0xFFfafcff),
+    onPrimary = Color(0xFFffffff),
     onSecondary = Color.Black,
     onTertiary = Color.Black,
     onBackground = Color(0xFF1C1B1F),
     onSurface = Color.Black,
     primaryContainer = Color(0xFFcee5ff),
-    secondaryContainer = Color(0xFFd1e5f4),
+    secondaryContainer = Color(0xFFf6f9ff),
     onSecondaryContainer = Color(0xFF001f2a),
-//    onSurfaceVariant = Color(0xFF41484d)
-            onSurfaceVariant = Color(0xFF41484d)
-
-    /**/
+    onSurfaceVariant = Color(0xFF41484d),
+    tertiaryContainer = Color(0xFF001f2a),
 )
 
 @Composable
 fun ComposeWeatherAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -79,7 +74,7 @@ fun ComposeWeatherAppTheme(
     if (!view.isInEditMode) {
         SideEffect {
 
-            systemUiController.setStatusBarColor(color = Color.Transparent)
+            systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = !darkTheme)
             //window.statusBarColor = colorScheme.primary.toArgb()
             //ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
         }
