@@ -21,4 +21,6 @@
     <string name="units_of_measurement">Units of measurement</string>
     <string name="settings">Settings</string>
     <string name="locale">Locale</string>
+    <string name="saved">Saved</string>
+    <string name="close">Close</string>
 </resources>

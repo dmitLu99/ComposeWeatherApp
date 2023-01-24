@@ -1,155 +1,156 @@
 package com.loodmeet.weatherapp.ui.main_screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.toSize
 import com.dmitLugg.weatherapp.R
 
-@OptIn(ExperimentalMaterialApi::class)
+sealed class BottomSheetListItem(open val nameResId: Int, open val onClick: () -> Unit) {
+
+    data class NamedBottomSheetListItem(
+        override val nameResId: Int,
+        override val onClick: () -> Unit
+    ) : BottomSheetListItem(nameResId, onClick)
+
+    data class ImagedBottomSheetListItem(
+        override val nameResId: Int,
+        val imageResId: Int,
+        override val onClick: () -> Unit
+    ) : BottomSheetListItem(nameResId, onClick)
+}
+
 @Composable
-fun BottomSheetContent(modifier: Modifier = Modifier, state: ModalBottomSheetState) {
+fun BottomSheetContent(
+    modifier: Modifier = Modifier,
+    topItems: List<BottomSheetListItem>,
+    bottomItems: List<BottomSheetListItem> = listOf(),
+    showDragHandle: Boolean = true,
+    headingResId: Int? = null
+) {
     Column(
-        modifier = modifier.padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+        modifier = modifier.padding(horizontal = 12.dp, vertical = 16.dp)
     ) {
-        Row(
+
+        if (showDragHandle) DragHandle()
+
+        if (headingResId != null) {
+            Text(
+                stringResource(headingResId), Modifier
+                    .fillMaxWidth()
+                    .height(55.dp),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+
+        if (topItems.isNotEmpty()) BottomSheetItem(items = topItems)
+
+        if (topItems.isNotEmpty() && bottomItems.isNotEmpty()) Spacer(modifier = Modifier.height(12.dp))
+
+        if (bottomItems.isNotEmpty()) BottomSheetItem(items = bottomItems)
+    }
+}
+
+@Composable
+fun DragHandle(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(30.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Divider(
+            thickness = 4.dp,
             modifier = Modifier
-                .fillMaxWidth()
-                .height(30.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Divider(
-                thickness = 5.dp,
-                modifier = Modifier
-                    .clip(shape = MaterialTheme.shapes.small)
-                    .width(50.dp),
-//                color =  MaterialTheme.colorScheme.onSecondaryContainer
-                color = if (state.targetValue != state.currentValue) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer
-            )
-        }
-        Text(
-            stringResource(R.string.settings), Modifier
-                .fillMaxWidth()
-                .height(55.dp),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.bodyLarge
+                .clip(shape = MaterialTheme.shapes.small)
+                .width(50.dp),
+            color = MaterialTheme.colorScheme.secondary
         )
-
-        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
-            Column(
-                modifier = Modifier
-                    .padding(20.dp)
-                    .background(Color.Transparent),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    stringResource(R.string.locale), Modifier
-                        .fillMaxWidth()
-                        .height(45.dp),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                BottomSheetListItem()
-            }
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer
-            )
-        ) {
-            Column(
-                modifier = Modifier.padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    stringResource(R.string.units_of_measurement), Modifier
-                        .fillMaxWidth()
-                        .height(45.dp),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                BottomSheetListItem()
-                BottomSheetListItem()
-                BottomSheetListItem()
-                BottomSheetListItem()
-            }
-        }
-
-        Spacer(modifier = Modifier.height(40.dp))
-
     }
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetListItem(modifier: Modifier = Modifier) {
+fun BottomSheetItem(items: List<BottomSheetListItem>) {
 
-    var expanded by remember { mutableStateOf(false) }
-    val suggestions = listOf("Item1", "Item2", "Item3")
-    var selectedText by remember { mutableStateOf("") }
-
-    var textfieldSize by remember { mutableStateOf(Size.Zero) }
-
-    val icon = if (expanded)
-        Icons.Filled.ArrowDropUp //it requires androidx.compose.material:material-icons-extended
-    else
-        Icons.Filled.ArrowDropDown
-
-
-    Column(modifier = modifier) {
-        OutlinedTextField(
-            readOnly = true,
-            value = selectedText,
-            onValueChange = { selectedText = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .onGloballyPositioned { coordinates ->
-                    //This value is used to assign to the DropDown the same width
-                    textfieldSize = coordinates.size.toSize()
-                },
-            label = { Text("temperature unit") },
-            trailingIcon = {
-                Icon(icon, "contentDescription",
-                    Modifier.clickable { expanded = !expanded })
-            }
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
         )
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier
-                .width(with(LocalDensity.current) { textfieldSize.width.toDp() })
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            suggestions.forEach { label ->
-                DropdownMenuItem(
-                    onClick = {
-                        selectedText = label
-                    },
-                    text = {
-                        Text(text = label)
-                    })
+            items.forEachIndexed { index, item ->
+                BottomSheetListItem(item = item)
+                if (index != items.size - 1) Divider()
             }
         }
+    }
+}
+
+@Composable
+fun BottomSheetListItem(
+    item: BottomSheetListItem,
+    modifier: Modifier = Modifier
+) {
+    if (item is BottomSheetListItem.ImagedBottomSheetListItem)
+        ImagedBottomSheetListItem(item = item, modifier = modifier)
+    else NamedBottomSheetListItem(
+        item = item as BottomSheetListItem.NamedBottomSheetListItem, modifier = modifier
+    )
+}
+
+
+@Composable
+fun NamedBottomSheetListItem(
+    item: BottomSheetListItem.NamedBottomSheetListItem,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .height(50.dp)
+            .clickable(onClick = item.onClick)
+            .padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            stringResource(id = item.nameResId),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
+}
+
+@Composable
+fun ImagedBottomSheetListItem(
+    item: BottomSheetListItem.ImagedBottomSheetListItem,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .height(50.dp)
+            .clickable(onClick = item.onClick)
+            .padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val painter = painterResource(id = item.imageResId)
+        Icon(painter = painter, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+        Spacer(modifier = Modifier.width(12.dp))
+        Text(
+            stringResource(id = item.nameResId),
+            modifier = Modifier.fillMaxWidth(),
+            style = MaterialTheme.typography.bodyLarge
+        )
     }
 }

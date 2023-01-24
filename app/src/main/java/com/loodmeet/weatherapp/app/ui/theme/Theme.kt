@@ -11,8 +11,10 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -69,14 +71,13 @@ fun ComposeWeatherAppTheme(
     }
     val view = LocalView.current
     val window = (view.context as Activity).window
-    WindowCompat.setDecorFitsSystemWindows(window, false)
+    WindowCompat.setDecorFitsSystemWindows(window, true)
     val systemUiController = rememberSystemUiController()
     if (!view.isInEditMode) {
         SideEffect {
+            systemUiController.setStatusBarColor(color = colorScheme.surface, darkIcons = !darkTheme)
+            systemUiController.setNavigationBarColor(colorScheme.background)
 
-            systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = !darkTheme)
-            //window.statusBarColor = colorScheme.primary.toArgb()
-            //ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
         }
     }
 
