@@ -1,14 +1,14 @@
 <resources>
     <string name="app_name">ComposeWeatherApp</string>
+    <string name="on_this_week">On This Week</string>
     <string name="today">Today</string>
     <string name="week">Week</string>
+
     <string name="sunrise">Sunrise</string>
     <string name="sunset">Sunset</string>
     <string name="apparent_temperature">Apparent temperature</string>
     <string name="wind">Wind</string>
     <string name="precipitation_sum">Precipitation sum</string>
-    <string name="clear_sky">Clear sky</string>
-    <string name="on_this_week">On This Week</string>
 
     <string name="celsius">°C</string>
     <string name="fahrenheit">°F</string>
@@ -19,8 +19,19 @@
     <string name="millimeter">mm</string>
     <string name="inch">″</string>
     <string name="units_of_measurement">Units of measurement</string>
+
     <string name="settings">Settings</string>
     <string name="locale">Locale</string>
     <string name="saved">Saved</string>
     <string name="close">Close</string>
+
+    <string name="country_russia">Russia</string>
+    <string name="city_volgograd">Volgograd</string>
+
+    <string name="temperature_unit">Temperature unit</string>
+    <string name="precipitation_unit">Precipitation unit</string>
+    <string name="wind_speed_unit">Wind speed unit</string>
+
+    <string name="clear_sky">Clear sky</string>
+    <string name="cloudy">Cloudy</string>
 </resources>

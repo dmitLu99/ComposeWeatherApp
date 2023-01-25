@@ -65,7 +65,7 @@ fun DragHandle(modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .height(30.dp),
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top
     ) {
         Divider(
             thickness = 4.dp,
@@ -76,7 +76,6 @@ fun DragHandle(modifier: Modifier = Modifier) {
         )
     }
 }
-
 
 @Composable
 fun BottomSheetItem(items: List<BottomSheetListItem>) {
@@ -145,7 +144,7 @@ fun ImagedBottomSheetListItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         val painter = painterResource(id = item.imageResId)
-        Icon(painter = painter, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+        Icon(painter = painter, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(26.dp))
         Spacer(modifier = Modifier.width(12.dp))
         Text(
             stringResource(id = item.nameResId),

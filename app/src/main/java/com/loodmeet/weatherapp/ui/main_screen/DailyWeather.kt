@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -31,8 +32,8 @@ val units = UnitsOfMeasurementResIds(
 val hourlyWeather =
     com.loodmeet.weatherapp.core.ui.models.HourlyWeather("", R.drawable.ic_person_outlined, "")
 val dailyWeather = DailyWeather(
-    descriptionResId = R.string.clear_sky,
-    iconResId = R.drawable.ic_person_outlined,
+    descriptionResId = R.string.cloudy,
+    iconResId = R.drawable.ic_sky_32,
     temperatureMax = 10,
     temperatureMin = 10,
     sunrise = "10:10",
@@ -111,10 +112,10 @@ fun TopDailyWeather(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
-                imageVector = Icons.Outlined.Person,
+                painter = painterResource(id = dailyWeather.iconResId),
                 contentDescription = null,
-                modifier = Modifier
-                    .size(iconSize)
+                modifier = Modifier.size(iconSize),
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Text(
                 text = stringResource(id = dailyWeather.descriptionResId),
