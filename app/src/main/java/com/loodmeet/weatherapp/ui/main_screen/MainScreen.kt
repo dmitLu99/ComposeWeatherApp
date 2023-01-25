@@ -1,11 +1,7 @@
 package com.loodmeet.weatherapp.ui.main_screen
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.FlingBehavior
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -30,10 +26,23 @@ import com.dmitLugg.weatherapp.R
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
 
+data class TabItem(val title: String, val screen: @Composable () -> Unit)
+
 @OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
-fun MainScreen() {
+fun MainScreen() = with(MaterialTheme.colorScheme) {
+
+    val tabs = listOf(
+        TabItem("Today") { Screen() },
+        TabItem("Tomorrow") { Screen() },
+        TabItem("Mon, 3 Feb") { Screen() },
+        TabItem("Mon, 3 Feb") { Screen() },
+        TabItem("Mon, 3 Feb") { Screen() },
+        TabItem("Mon, 3 Feb") { Screen() },
+        TabItem("Mon, 3 Feb") { Screen() },
+    )
+
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
     val modalBottomSheetState = rememberModalBottomSheetState(
@@ -45,43 +54,40 @@ fun MainScreen() {
 
     val bottomSheetListItemOnClick: () -> Unit = {
         scope.apply {
-            launch {
-                modalBottomSheetState.hide()
-            }
-            launch {
-                mainModalBottomSheetState.show()
-            }
+            launch { modalBottomSheetState.hide() }
+            launch { mainModalBottomSheetState.show() }
         }
     }
-    val savedText = stringResource(R.string.saved)
-    val closeText = stringResource(R.string.close)
+
+    val savedText = LocalContext.current.getText(R.string.saved).toString()
+    val closeText = LocalContext.current.getText(R.string.close).toString()
 
     val topNamedItemsOnClick: () -> Unit = {
-        scope.launch {
-            mainModalBottomSheetState.hide()
-            scaffoldState.snackbarHostState.showSnackbar(savedText, closeText)
+        scope.apply {
+            launch { mainModalBottomSheetState.hide() }
+            launch { scaffoldState.snackbarHostState.showSnackbar(savedText, closeText) }
         }
     }
 
     val topNamedItems = listOf(
         BottomSheetListItem.ImagedBottomSheetListItem(
-            R.string.locale,
+            R.string.location,
             R.drawable.baseline_check,
             topNamedItemsOnClick
         ),
         BottomSheetListItem.NamedBottomSheetListItem(
-            R.string.locale,
+            R.string.location,
             topNamedItemsOnClick
         ),
         BottomSheetListItem.NamedBottomSheetListItem(
-            R.string.locale,
+            R.string.location,
             topNamedItemsOnClick
         ),
     )
 
     val topItems = listOf(
         BottomSheetListItem.ImagedBottomSheetListItem(
-            R.string.locale,
+            R.string.location,
             R.drawable.outline_location,
             bottomSheetListItemOnClick
         )
@@ -104,40 +110,31 @@ fun MainScreen() {
         )
     )
 
-    ModalBottomSheetLayout(
-        sheetBackgroundColor = MaterialTheme.colorScheme.background,
-        sheetContent = {
-            BottomSheetContent(topItems = topNamedItems, showDragHandle = false)
-        },
-        sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-        sheetState = mainModalBottomSheetState,
+    val roundedShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
 
-        ) {
+    ModalBottomSheetLayout(
+        sheetBackgroundColor = background,
+        sheetContent = { BottomSheetContent(topItems = topNamedItems, showDragHandle = false) },
+        sheetShape = roundedShape,
+        sheetState = mainModalBottomSheetState
+    ) {
         ModalBottomSheetLayout(
-            sheetBackgroundColor = MaterialTheme.colorScheme.background,
-            sheetContent = {
-                BottomSheetContent(
-                    topItems = topItems,
-                    bottomItems = bottomItems
-                )
-            },
-            sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+            sheetBackgroundColor = background,
+            sheetContent = { BottomSheetContent(topItems = topItems, bottomItems = bottomItems) },
+            sheetShape = roundedShape,
             sheetState = modalBottomSheetState
         ) {
             Scaffold(
                 topBar = {
                     TopAppBar {
                         scope.launch {
-                            if (modalBottomSheetState.isVisible) modalBottomSheetState.hide()
-                            else modalBottomSheetState.show()
+                            modalBottomSheetState.apply { if (isVisible) hide() else show() }
                         }
                     }
                 },
                 scaffoldState = scaffoldState
             ) { innerPadding ->
-                Column(Modifier.padding(innerPadding)) {
-                    Tabs()
-                }
+                Column(Modifier.padding(innerPadding)) { Tabs(tabs = tabs) }
             }
         }
     }
@@ -145,11 +142,12 @@ fun MainScreen() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(moreButtonOnClick: () -> Unit = {}) {
+fun TopAppBar(moreButtonOnClick: () -> Unit = {}) = with(MaterialTheme.colorScheme) {
+
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
-            navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-            actionIconContentColor = MaterialTheme.colorScheme.onSurface
+            navigationIconContentColor = onSurface,
+            actionIconContentColor = onSurface
         ),
         title = {
             Text(
@@ -177,76 +175,65 @@ fun TopAppBar(moreButtonOnClick: () -> Unit = {}) {
     )
 }
 
-data class TabItem(val title: String, val screen: @Composable () -> Unit)
-
-val tabs = listOf(
-    TabItem("Today") { Screen() },
-    TabItem("Tomorrow") { Screen() },
-    TabItem("Mon, 3 Feb") { Screen() },
-    TabItem("Mon, 3 Feb") { Screen() },
-    TabItem("Mon, 3 Feb") { Screen() },
-    TabItem("Mon, 3 Feb") { Screen() },
-    TabItem("Mon, 3 Feb") { Screen() },
-)
-
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Tabs() {
+fun Tabs(tabs: List<TabItem>) = with(MaterialTheme.colorScheme) {
 
     val pagerState = rememberPagerState()
-
-    val scope = rememberCoroutineScope()
 
     Column {
         ScrollableTabRow(
             selectedTabIndex = pagerState.currentPage,
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface,
+            containerColor = surface,
+            contentColor = onSurface,
             edgePadding = (LocalConfiguration.current.screenWidthDp / 2).dp,
             indicator = {}
         ) {
             tabs.forEachIndexed { index, tab ->
+
                 val shape = RoundedCornerShape(30.dp)
-                Tab(
-                    selectedContentColor = MaterialTheme.colorScheme.onPrimary,
-                    unselectedContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    text = {
-                        Text(
-                            text = tab.title,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = if (pagerState.currentPage == index)
-                                MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
-                        )
-                    },
-                    selected = pagerState.currentPage == index,
-                    onClick = {
-                        scope.launch {
-                            val spring = spring<Float>(stiffness = Spring.StiffnessVeryLow)
-                            pagerState.animateScrollToPage(
-                                page = index,
-                                pagerState.currentPageOffset
-                            )
-                        }
-                    },
-                    modifier = Modifier
-                        .padding(horizontal = 3.dp, vertical = 12.dp)
-                        .clip(shape)
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            shape = shape
-                        )
-                        .background(
-                            if (pagerState.currentPage == index)
-                                MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.surface
-                        )
-                )
+                val tabModifier = Modifier
+                    .padding(horizontal = 3.dp, vertical = 12.dp)
+                    .clip(shape)
+                    .border(width = 1.dp, color = onSurface, shape = shape)
+                    .background(if (pagerState.currentPage == index) primary else surface)
+
+                TabItem(modifier = tabModifier, tab = tab, index = index, pagerState = pagerState)
             }
         }
         Pager(tabs, pagerState)
     }
 }
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun TabItem(modifier: Modifier = Modifier, tab: TabItem, index: Int, pagerState: PagerState) =
+    with(MaterialTheme.colorScheme) {
+
+        val scope = rememberCoroutineScope()
+
+        Tab(
+            selectedContentColor = onPrimary,
+            unselectedContentColor = onSecondaryContainer,
+            text = {
+                Text(
+                    text = tab.title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = if (pagerState.currentPage == index) onPrimary else onSurface
+                )
+            },
+            selected = pagerState.currentPage == index,
+            onClick = {
+                scope.launch {
+//                            val spring = spring<Float>(stiffness = Spring.StiffnessVeryLow)
+                    pagerState.animateScrollToPage(
+                        page = index, pageOffset = pagerState.currentPageOffset
+                    )
+                }
+            },
+            modifier = modifier
+        )
+    }
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable

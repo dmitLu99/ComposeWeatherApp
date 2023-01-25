@@ -1,10 +1,10 @@
-package com.loodmeet.weatherapp.app.ui.activity
+package com.loodmeet.weatherapp.ui.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.loodmeet.weatherapp.app.ui.composable.AppNavHost
-import com.loodmeet.weatherapp.app.ui.theme.ComposeWeatherAppTheme
+import com.loodmeet.weatherapp.ui.navigation.AppNavHost
+import com.loodmeet.weatherapp.ui.theme.ComposeWeatherAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -12,9 +12,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ComposeWeatherAppTheme {
-
                 AppNavHost()
-
             }
         }
     }

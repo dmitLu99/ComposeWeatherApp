@@ -1,4 +1,4 @@
-package com.loodmeet.weatherapp.app.ui.theme
+package com.loodmeet.weatherapp.ui.theme
 
 import android.app.Activity
 import android.os.Build
@@ -11,10 +11,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -77,9 +75,10 @@ fun ComposeWeatherAppTheme(
     val systemUiController = rememberSystemUiController()
     if (!view.isInEditMode) {
         SideEffect {
-            systemUiController.setStatusBarColor(color = colorScheme.surface, darkIcons = !darkTheme)
-            systemUiController.setNavigationBarColor(colorScheme.background)
-
+            systemUiController.apply {
+                setStatusBarColor(color = colorScheme.surface, darkIcons = !darkTheme)
+                setNavigationBarColor(colorScheme.background)
+            }
         }
     }
 

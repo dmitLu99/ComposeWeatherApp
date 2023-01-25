@@ -9,8 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.dmitLugg.weatherapp.R
 
 sealed class BottomSheetListItem(open val nameResId: Int, open val onClick: () -> Unit) {
 
@@ -34,6 +34,7 @@ fun BottomSheetContent(
     showDragHandle: Boolean = true,
     headingResId: Int? = null
 ) {
+
     Column(
         modifier = modifier.padding(horizontal = 12.dp, vertical = 16.dp)
     ) {
@@ -59,7 +60,8 @@ fun BottomSheetContent(
 }
 
 @Composable
-fun DragHandle(modifier: Modifier = Modifier) {
+fun DragHandle(modifier: Modifier = Modifier) = with(MaterialTheme) {
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -70,9 +72,9 @@ fun DragHandle(modifier: Modifier = Modifier) {
         Divider(
             thickness = 4.dp,
             modifier = Modifier
-                .clip(shape = MaterialTheme.shapes.small)
+                .clip(shape = shapes.small)
                 .width(50.dp),
-            color = MaterialTheme.colorScheme.secondary
+            color = colorScheme.secondary
         )
     }
 }
@@ -89,7 +91,7 @@ fun BottomSheetItem(items: List<BottomSheetListItem>) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items.forEachIndexed { index, item ->
-                BottomSheetListItem(item = item)
+                BottomSheetListItem(item = item, modifier = Modifier.height(50.dp))
                 if (index != items.size - 1) Divider()
             }
         }
@@ -101,6 +103,7 @@ fun BottomSheetListItem(
     item: BottomSheetListItem,
     modifier: Modifier = Modifier
 ) {
+
     if (item is BottomSheetListItem.ImagedBottomSheetListItem)
         ImagedBottomSheetListItem(item = item, modifier = modifier)
     else NamedBottomSheetListItem(
@@ -108,24 +111,24 @@ fun BottomSheetListItem(
     )
 }
 
-
 @Composable
 fun NamedBottomSheetListItem(
     item: BottomSheetListItem.NamedBottomSheetListItem,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    horizontalPadding: Dp = 12.dp
 ) {
+
     Row(
         modifier = modifier
-            .height(50.dp)
             .clickable(onClick = item.onClick)
-            .padding(horizontal = 12.dp),
+            .padding(horizontal = horizontalPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             stringResource(id = item.nameResId),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp),
+                .padding(horizontal = horizontalPadding),
             style = MaterialTheme.typography.bodyLarge
         )
     }
@@ -134,22 +137,27 @@ fun NamedBottomSheetListItem(
 @Composable
 fun ImagedBottomSheetListItem(
     item: BottomSheetListItem.ImagedBottomSheetListItem,
-    modifier: Modifier = Modifier
-) {
+    modifier: Modifier = Modifier,
+    horizontalPadding: Dp = 12.dp
+) = with(MaterialTheme) {
+
     Row(
         modifier = modifier
-            .height(50.dp)
             .clickable(onClick = item.onClick)
-            .padding(horizontal = 12.dp),
+            .padding(horizontal = horizontalPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val painter = painterResource(id = item.imageResId)
-        Icon(painter = painter, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(26.dp))
-        Spacer(modifier = Modifier.width(12.dp))
+        Icon(
+            painter = painterResource(id = item.imageResId),
+            contentDescription = null,
+            tint = colorScheme.primary,
+            modifier = Modifier.size(26.dp)
+        )
+        Spacer(modifier = Modifier.width(horizontalPadding))
         Text(
             stringResource(id = item.nameResId),
             modifier = Modifier.fillMaxWidth(),
-            style = MaterialTheme.typography.bodyLarge
+            style = typography.bodyLarge
         )
     }
 }

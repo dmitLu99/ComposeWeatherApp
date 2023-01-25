@@ -1,4 +1,4 @@
-package com.loodmeet.weatherapp.app.ui.theme
+package com.loodmeet.weatherapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

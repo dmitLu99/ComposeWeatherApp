@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,20 +16,32 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dmitLugg.weatherapp.R
-import com.loodmeet.weatherapp.core.ui.composable.TextRow
-import com.loodmeet.weatherapp.core.ui.composable.VerticalDivider
-import com.loodmeet.weatherapp.core.ui.models.Units
-import com.loodmeet.weatherapp.core.ui.models.UnitsOfMeasurementResIds
-import com.loodmeet.weatherapp.feature_daily_weather.ui.models.DailyWeather
+import com.loodmeet.weatherapp.core.models.UnitsOfMeasurementResIds
+import com.loodmeet.weatherapp.core.models.UnitsOfMeasurementResIds.Companion.TemperatureUnits.CELSIUS
+import com.loodmeet.weatherapp.core.models.UnitsOfMeasurementResIds.Companion.WindSpeedUnits.METRES_PER_SECOND
+import com.loodmeet.weatherapp.core.models.UnitsOfMeasurementResIds.Companion.PrecipitationUnits.MILLIMETER
 
-val units = UnitsOfMeasurementResIds(
-    temperatureUnitResId = Units.TemperatureUnits.CELSIUS,
-    windSpeedUnitResId = Units.WindSpeedUnits.METRES_PER_SECOND,
-    precipitationUnitResId = Units.PrecipitationUnits.MILLIMETER
+data class DailyWeather(
+    val descriptionResId: Int,
+    val iconResId: Int,
+    val temperatureMax: Int,
+    val temperatureMin: Int,
+    val sunrise: String,
+    val sunset: String,
+    val apparentTemperatureMin: Int,
+    val apparentTemperatureMax: Int,
+    val windSpeed: Double,
+    val windDirectionIconResId: Int,
+    val precipitationSum: Int,
+    val unitsOfMeasurementResIds: UnitsOfMeasurementResIds
 )
 
-val hourlyWeather =
-    com.loodmeet.weatherapp.core.ui.models.HourlyWeather("", R.drawable.ic_person_outlined, "")
+val units = UnitsOfMeasurementResIds(
+    temperatureUnitResId = CELSIUS,
+    windSpeedUnitResId = METRES_PER_SECOND,
+    precipitationUnitResId = MILLIMETER
+)
+
 val dailyWeather = DailyWeather(
     descriptionResId = R.string.cloudy,
     iconResId = R.drawable.ic_sky_32,
@@ -43,16 +54,14 @@ val dailyWeather = DailyWeather(
     windSpeed = 10.1,
     windDirectionIconResId = R.drawable.ic_person_outlined,
     precipitationSum = 10,
-    hourlyWeather = listOf(hourlyWeather),
     unitsOfMeasurementResIds = units
 )
 
 @Composable
 fun Screen() {
 
-    val dividerModifier = Modifier.fillMaxWidth(1f)
-
     Surface(color = Color.Transparent, contentColor = MaterialTheme.colorScheme.onBackground) {
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -60,40 +69,48 @@ fun Screen() {
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val dailyWeatherCardModifier = Modifier
+                .weight(1f)
+                .padding(vertical = 30.dp)
 
-            ElevatedCard(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(vertical = 30.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-                elevation = CardDefaults.cardElevation(6.dp)
-            ) {
-                TopDailyWeather(
-                    dailyWeather = dailyWeather,
-                    modifier = Modifier
-                        .padding(vertical = 40.dp)
-                )
-            }
+            DailyWeatherCard(modifier = dailyWeatherCardModifier, dailyWeather = dailyWeather)
+
             Surface(
                 color = Color.Transparent,
-                modifier = Modifier
-                    .weight(1.5f)
+                modifier = Modifier.weight(1.5f)
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
-                    SunriseAndSunset(modifier = Modifier.weight(0.5f))
+                    val dividerModifier = Modifier.fillMaxWidth(1f)
+                    val rowModifier = Modifier
+                        .weight(0.5f)
+                        .fillMaxWidth()
+
+                    SunriseAndSunset(modifier = rowModifier)
                     Divider(dividerModifier)
-                    ApparentTemperature(modifier = Modifier.weight(0.5f))
+                    ApparentTemperature(modifier = rowModifier)
                     Divider(dividerModifier)
-                    Wind(modifier = Modifier.weight(0.5f))
+                    Wind(modifier = rowModifier)
                     Divider(dividerModifier)
-                    PrecipitationSum(modifier = Modifier.weight(0.5f))
+                    PrecipitationSum(modifier = rowModifier)
                 }
-
             }
-
         }
     }
+}
 
+@Composable
+fun DailyWeatherCard(modifier: Modifier = Modifier, dailyWeather: DailyWeather) {
+
+    ElevatedCard(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        elevation = CardDefaults.cardElevation(6.dp)
+    ) {
+        TopDailyWeather(
+            dailyWeather = dailyWeather,
+            modifier = Modifier.padding(vertical = 40.dp)
+        )
+    }
 }
 
 @Composable
@@ -101,30 +118,32 @@ fun TopDailyWeather(
     modifier: Modifier = Modifier,
     iconSize: Dp = 48.dp,
     dailyWeather: DailyWeather
-) {
+) = with(MaterialTheme.colorScheme) {
+
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
-            modifier = Modifier
-                .weight(1f),
+            modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
                 painter = painterResource(id = dailyWeather.iconResId),
                 contentDescription = null,
                 modifier = Modifier.size(iconSize),
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                tint = onPrimaryContainer
             )
             Text(
                 text = stringResource(id = dailyWeather.descriptionResId),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
+                color = onSecondaryContainer
             )
         }
 
-        VerticalDivider(horizontalPadding = 0.dp, verticalPadding = 10.dp)
+        Divider(modifier = Modifier
+            .width(1.dp)
+            .fillMaxHeight())
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -135,16 +154,20 @@ fun TopDailyWeather(
             Text(
                 text = "${dailyWeather.temperatureMin}° / ${dailyWeather.temperatureMax}°",
                 style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
+                color = onSecondaryContainer
             )
         }
-
     }
-
 }
 
 @Composable
-fun SunriseAndSunset(modifier: Modifier = Modifier) {
+fun SunriseAndSunset(modifier: Modifier = Modifier, progress: Float = 0.6f) {
+
+    val progressIndicatorModifier = Modifier
+        .fillMaxWidth(fraction = 0.85f)
+        .height(4.dp)
+        .clip(RoundedCornerShape(5.dp))
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -155,17 +178,15 @@ fun SunriseAndSunset(modifier: Modifier = Modifier) {
             Text(text = "${stringResource(R.string.sunset)}: ${dailyWeather.sunset}")
         }
         LinearProgressIndicator(
-            progress = 0.6f,
-            modifier = Modifier
-                .fillMaxWidth(fraction = 0.85f)
-                .height(4.dp)
-                .clip(RoundedCornerShape(5.dp))
+            progress = progress,
+            modifier = progressIndicatorModifier
         )
     }
 }
 
 @Composable
 fun ApparentTemperature(modifier: Modifier = Modifier) {
+
     TextRow(modifier = modifier) {
         Text(
             text = "${stringResource(R.string.apparent_temperature)}: ",
@@ -214,4 +235,15 @@ fun PrecipitationSum(modifier: Modifier = Modifier) {
             }"
         )
     }
+}
+
+@Composable
+fun TextRow(modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
+
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        content = content
+    )
 }
