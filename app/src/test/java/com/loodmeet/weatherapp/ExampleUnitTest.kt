@@ -1,4 +1,4 @@
-package com.dmitLugg.weatherapp
+package com.loodmeet.weatherapp
 
 import org.junit.Test
 
