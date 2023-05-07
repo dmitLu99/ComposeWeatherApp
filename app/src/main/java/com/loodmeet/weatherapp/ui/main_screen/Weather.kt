@@ -1,11 +1,14 @@
 package com.loodmeet.weatherapp.ui.main_screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,7 +24,7 @@ import com.loodmeet.weatherapp.core.models.UnitsOfMeasurementResIds.Companion.Te
 import com.loodmeet.weatherapp.core.models.UnitsOfMeasurementResIds.Companion.WindSpeedUnits.METRES_PER_SECOND
 import com.loodmeet.weatherapp.core.models.UnitsOfMeasurementResIds.Companion.PrecipitationUnits.MILLIMETER
 
-data class DailyWeather(
+data class Weather(
     val descriptionResId: Int,
     val iconResId: Int,
     val temperatureMax: Int,
@@ -42,7 +45,7 @@ val units = UnitsOfMeasurementResIds(
     precipitationUnitResId = MILLIMETER
 )
 
-val dailyWeather = DailyWeather(
+val weather = Weather(
     descriptionResId = R.string.cloudy,
     iconResId = R.drawable.ic_sky_32,
     temperatureMax = 10,
@@ -73,7 +76,7 @@ fun Screen() {
                 .weight(1f)
                 .padding(vertical = 30.dp)
 
-            DailyWeatherCard(modifier = dailyWeatherCardModifier, dailyWeather = dailyWeather)
+            WeatherCard(modifier = dailyWeatherCardModifier, weather = weather)
 
             Surface(
                 color = Color.Transparent,
@@ -98,18 +101,106 @@ fun Screen() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DailyWeatherCard(modifier: Modifier = Modifier, dailyWeather: DailyWeather) {
+fun WeatherCard(modifier: Modifier = Modifier, weather: Weather) {
+
+    var isDaily by remember { mutableStateOf(false) }
 
     ElevatedCard(
         modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-        elevation = CardDefaults.cardElevation(6.dp)
+        elevation = CardDefaults.cardElevation(6.dp), onClick = {
+            isDaily = !isDaily
+        }
     ) {
-        TopDailyWeather(
-            dailyWeather = dailyWeather,
-            modifier = Modifier.padding(vertical = 40.dp)
-        )
+        Column {
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, end = 8.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.outline_info_24),
+                    contentDescription = null
+                )
+            }
+
+            Row{
+                val weatherModifier = Modifier
+                    .padding(bottom = 30.dp, top = 10.dp)
+                    .fillMaxWidth()
+                if (isDaily) {
+                    TopDailyWeather(
+                        weather = weather,
+                        modifier = weatherModifier
+                    )
+                } else {
+                    TopHourlyWeather(
+                        weather = weather,
+                        modifier = weatherModifier
+                    )
+                }
+            }
+        }
+    }
+}
+
+data class HourlyWeather(
+    val description: String,
+    val iconId: Int,
+    val temperatureMin: Int,
+    val temperatureMax: Int
+)
+
+@Composable
+fun TopHourlyWeather(
+    modifier: Modifier = Modifier,
+    weather: Weather,
+    iconSize: Dp = 56.dp,
+) = with(MaterialTheme.colorScheme) {
+    val list = List(size = 24) {
+        if (it != 1) {
+            HourlyWeather(description = "cloudy", iconId = R.drawable.ic_sky_32, 10, 10)
+        } else {
+            HourlyWeather(description = "cloudy", iconId = R.drawable.ic_sky_32, -10, -10)
+        }
+    }
+    LazyRow(
+        modifier = modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        contentPadding = PaddingValues(horizontal = 5.dp)
+    ) {
+        items(list) { item ->
+            OutlinedCard(modifier = Modifier.padding(horizontal = 5.dp)) {
+                Column(
+                    verticalArrangement = Arrangement.SpaceEvenly,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .width(70.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = item.iconId),
+                        contentDescription = null,
+                        modifier = Modifier.size(iconSize),
+                        tint = onPrimaryContainer
+                    )
+                    Text(
+                        text = "${item.temperatureMin}° / ${item.temperatureMax}°",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = onSecondaryContainer
+                    )
+                    Text(
+                        text = item.description,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = onSecondaryContainer,
+                        modifier = Modifier.padding(vertical = 3.dp)
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -117,7 +208,7 @@ fun DailyWeatherCard(modifier: Modifier = Modifier, dailyWeather: DailyWeather) 
 fun TopDailyWeather(
     modifier: Modifier = Modifier,
     iconSize: Dp = 48.dp,
-    dailyWeather: DailyWeather
+    weather: Weather
 ) = with(MaterialTheme.colorScheme) {
 
     Row(
@@ -129,21 +220,23 @@ fun TopDailyWeather(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
-                painter = painterResource(id = dailyWeather.iconResId),
+                painter = painterResource(id = weather.iconResId),
                 contentDescription = null,
                 modifier = Modifier.size(iconSize),
                 tint = onPrimaryContainer
             )
             Text(
-                text = stringResource(id = dailyWeather.descriptionResId),
+                text = stringResource(id = weather.descriptionResId),
                 style = MaterialTheme.typography.bodyLarge,
                 color = onSecondaryContainer
             )
         }
 
-        Divider(modifier = Modifier
-            .width(1.dp)
-            .fillMaxHeight())
+        Divider(
+            modifier = Modifier
+                .width(1.dp)
+                .fillMaxHeight(), color = MaterialTheme.colorScheme.onSecondaryContainer
+        )
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -152,7 +245,7 @@ fun TopDailyWeather(
                 .weight(1f)
         ) {
             Text(
-                text = "${dailyWeather.temperatureMin}° / ${dailyWeather.temperatureMax}°",
+                text = "${weather.temperatureMin}° / ${weather.temperatureMax}°",
                 style = MaterialTheme.typography.headlineMedium,
                 color = onSecondaryContainer
             )
@@ -174,8 +267,8 @@ fun SunriseAndSunset(modifier: Modifier = Modifier, progress: Float = 0.6f) {
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         TextRow {
-            Text(text = "${stringResource(R.string.sunrise)}: ${dailyWeather.sunrise}")
-            Text(text = "${stringResource(R.string.sunset)}: ${dailyWeather.sunset}")
+            Text(text = "${stringResource(R.string.sunrise)}: ${weather.sunrise}")
+            Text(text = "${stringResource(R.string.sunset)}: ${weather.sunset}")
         }
         LinearProgressIndicator(
             progress = progress,
@@ -192,7 +285,7 @@ fun ApparentTemperature(modifier: Modifier = Modifier) {
             text = "${stringResource(R.string.apparent_temperature)}: ",
             textAlign = TextAlign.Center
         )
-        Text(text = "${dailyWeather.apparentTemperatureMin}° / ${dailyWeather.apparentTemperatureMax}°")
+        Text(text = "${weather.apparentTemperatureMin}° / ${weather.apparentTemperatureMax}°")
     }
 }
 
@@ -211,9 +304,9 @@ fun Wind(modifier: Modifier = Modifier) {
                 modifier = Modifier.size(24.dp)
             )
             Text(
-                text = "${dailyWeather.windSpeed} ${
+                text = "${weather.windSpeed} ${
                     stringResource(
-                        id = dailyWeather.unitsOfMeasurementResIds.windSpeedUnitResId
+                        id = weather.unitsOfMeasurementResIds.windSpeedUnitResId
                     )
                 }",
                 modifier = Modifier
@@ -228,9 +321,9 @@ fun PrecipitationSum(modifier: Modifier = Modifier) {
     TextRow(modifier = modifier) {
         Text(text = "${stringResource(R.string.precipitation_sum)}:")
         Text(
-            text = "${dailyWeather.precipitationSum} ${
+            text = "${weather.precipitationSum} ${
                 stringResource(
-                    id = dailyWeather.unitsOfMeasurementResIds.precipitationUnitResId
+                    id = weather.unitsOfMeasurementResIds.precipitationUnitResId
                 )
             }"
         )
