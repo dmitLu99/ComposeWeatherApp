@@ -8,7 +8,9 @@ object Config {
 
         const val UI_LOG_TAG = "UILogger"
 
-        fun logDebug(message: String) { Log.d(UI_LOG_TAG, message) }
+        fun logDebug(message: String) {
+            Log.d(UI_LOG_TAG, message)
+        }
     }
 
     object NAVIGATION {

@@ -24,7 +24,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dmitLugg.weatherapp.R
 import com.google.accompanist.pager.*
+import com.loodmeet.weatherapp.ui.models.BottomSheetListItem
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import com.loodmeet.weatherapp.core.models.Named
+import com.loodmeet.weatherapp.core.models.UnitOfMeasurement
 
 data class TabItem(val title: String, val screen: @Composable () -> Unit)
 
@@ -34,13 +39,13 @@ data class TabItem(val title: String, val screen: @Composable () -> Unit)
 fun MainScreen() = with(MaterialTheme.colorScheme) {
 
     val tabs = listOf(
-        TabItem("Today") { Screen() },
-        TabItem("Tomorrow") { Screen() },
-        TabItem("Mon, 3 Feb") { Screen() },
-        TabItem("Mon, 3 Feb") { Screen() },
-        TabItem("Mon, 3 Feb") { Screen() },
-        TabItem("Mon, 3 Feb") { Screen() },
-        TabItem("Mon, 3 Feb") { Screen() },
+        TabItem("Today") { WeatherScreen() },
+        TabItem("Tomorrow") { WeatherScreen() },
+        TabItem("Mon, 3 Feb") { WeatherScreen() },
+        TabItem("Mon, 3 Feb") { WeatherScreen() },
+        TabItem("Mon, 3 Feb") { WeatherScreen() },
+        TabItem("Mon, 3 Feb") { WeatherScreen() },
+        TabItem("Mon, 3 Feb") { WeatherScreen() },
     )
 
     val scope = rememberCoroutineScope()
@@ -52,7 +57,12 @@ fun MainScreen() = with(MaterialTheme.colorScheme) {
         initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true
     )
 
-    val bottomSheetListItemOnClick: () -> Unit = {
+    var unitItems by remember {
+        mutableStateOf(listOf<BottomSheetListItem>())
+    }
+
+    val bottomSheetListItemOnClick: (items: List<BottomSheetListItem>) -> Unit = { items ->
+        unitItems = items
         scope.apply {
             launch { modalBottomSheetState.hide() }
             launch { mainModalBottomSheetState.show() }
@@ -69,52 +79,71 @@ fun MainScreen() = with(MaterialTheme.colorScheme) {
         }
     }
 
-    val topNamedItems = listOf(
-        BottomSheetListItem.ImagedBottomSheetListItem(
-            R.string.location,
-            R.drawable.baseline_check,
-            topNamedItemsOnClick
+    var selectedTemperature: UnitOfMeasurement.TemperatureUnit by remember {
+        mutableStateOf(UnitOfMeasurement.TemperatureUnit.Celsius)
+    }
+
+    var selectedWindSpeed: UnitOfMeasurement.WindSpeedUnit by remember {
+        mutableStateOf(UnitOfMeasurement.WindSpeedUnit.MetresPerSecond)
+    }
+
+    var selectedPrecipitation: UnitOfMeasurement.PrecipitationUnit by remember {
+        mutableStateOf(UnitOfMeasurement.PrecipitationUnit.Millimeter)
+    }
+
+    val temperatureItems = mapToBottomSheetListItem(
+        items = listOf(
+            UnitOfMeasurement.TemperatureUnit.Celsius,
+            UnitOfMeasurement.TemperatureUnit.Fahrenheit
         ),
-        BottomSheetListItem.NamedBottomSheetListItem(
-            R.string.location,
-            topNamedItemsOnClick
+        onClick = topNamedItemsOnClick,
+        isClicked = { item -> item == selectedTemperature },
+        onSelect = { item -> selectedTemperature = item }
+    )
+
+    val windSpeedItems = mapToBottomSheetListItem(
+        items = listOf(
+            UnitOfMeasurement.WindSpeedUnit.KilometresPerHour,
+            UnitOfMeasurement.WindSpeedUnit.MetresPerSecond,
+            UnitOfMeasurement.WindSpeedUnit.MilesPerHour,
+            UnitOfMeasurement.WindSpeedUnit.Knots
         ),
-        BottomSheetListItem.NamedBottomSheetListItem(
-            R.string.location,
-            topNamedItemsOnClick
+        onClick = topNamedItemsOnClick,
+        isClicked = { item -> item == selectedWindSpeed },
+        onSelect = { item -> selectedWindSpeed = item }
+    )
+
+    val precipitationItems = mapToBottomSheetListItem(
+        items = listOf(
+            UnitOfMeasurement.PrecipitationUnit.Millimeter,
+            UnitOfMeasurement.PrecipitationUnit.Inch
         ),
+        onClick = topNamedItemsOnClick,
+        isClicked = { item -> item == selectedPrecipitation },
+        onSelect = { item -> selectedPrecipitation = item }
     )
 
     val topItems = listOf(
-        BottomSheetListItem.ImagedBottomSheetListItem(
-            R.string.location,
-            R.drawable.outline_location,
-            bottomSheetListItemOnClick
-        )
+        BottomSheetListItem.ImagedBottomSheetListItem.LocationItem {}
     )
+
     val bottomItems = listOf(
-        BottomSheetListItem.ImagedBottomSheetListItem(
-            R.string.temperature_unit,
-            R.drawable.ic_thermometer_1_32,
-            bottomSheetListItemOnClick
-        ),
-        BottomSheetListItem.ImagedBottomSheetListItem(
-            R.string.wind_speed_unit,
-            R.drawable.outline_air,
-            bottomSheetListItemOnClick
-        ),
-        BottomSheetListItem.ImagedBottomSheetListItem(
-            R.string.precipitation_unit,
-            R.drawable.outline_water_drop,
-            bottomSheetListItemOnClick
-        )
+        BottomSheetListItem.ImagedBottomSheetListItem.TemperatureItem {
+            bottomSheetListItemOnClick(temperatureItems)
+        },
+        BottomSheetListItem.ImagedBottomSheetListItem.WindSpeedItem {
+            bottomSheetListItemOnClick(windSpeedItems)
+        },
+        BottomSheetListItem.ImagedBottomSheetListItem.PrecipitationItem {
+            bottomSheetListItemOnClick(precipitationItems)
+        }
     )
 
     val roundedShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
 
     ModalBottomSheetLayout(
         sheetBackgroundColor = background,
-        sheetContent = { BottomSheetContent(topItems = topNamedItems, showDragHandle = false) },
+        sheetContent = { BottomSheetContent(topItems = unitItems, showDragHandle = false) },
         sheetShape = roundedShape,
         sheetState = mainModalBottomSheetState
     ) {
@@ -246,5 +275,30 @@ fun Pager(tabs: List<TabItem>, pagerState: PagerState) {
         modifier = Modifier.background(MaterialTheme.colorScheme.background)
     ) { page ->
         tabs[page].screen()
+    }
+}
+
+private fun <T : Named> mapToBottomSheetListItem(
+    items: List<T>,
+    onClick: () -> Unit,
+    isClicked: (T) -> Boolean,
+    onSelect: (T) -> Unit
+): List<BottomSheetListItem> {
+
+    return items.map { item ->
+        if (isClicked(item)) {
+            BottomSheetListItem.ImagedBottomSheetListItem.SelectedItem(
+                nameResId = item.nameResId,
+            ) {
+                onClick()
+            }
+        } else {
+            BottomSheetListItem.NamedBottomSheetListItem(
+                nameResId = item.nameResId
+            ) {
+                onSelect(item)
+                onClick()
+            }
+        }
     }
 }

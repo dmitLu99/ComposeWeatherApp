@@ -1,6 +1,5 @@
 package com.loodmeet.weatherapp.ui.main_screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -61,7 +60,7 @@ val weather = Weather(
 )
 
 @Composable
-fun Screen() {
+fun WeatherScreen() {
 
     Surface(color = Color.Transparent, contentColor = MaterialTheme.colorScheme.onBackground) {
 
@@ -105,7 +104,7 @@ fun Screen() {
 @Composable
 fun WeatherCard(modifier: Modifier = Modifier, weather: Weather) {
 
-    var isDaily by remember { mutableStateOf(false) }
+    var isDaily by remember { mutableStateOf(true) }
 
     ElevatedCard(
         modifier = modifier,
@@ -127,7 +126,7 @@ fun WeatherCard(modifier: Modifier = Modifier, weather: Weather) {
                 )
             }
 
-            Row{
+            Row {
                 val weatherModifier = Modifier
                     .padding(bottom = 30.dp, top = 10.dp)
                     .fillMaxWidth()
@@ -161,11 +160,7 @@ fun TopHourlyWeather(
     iconSize: Dp = 56.dp,
 ) = with(MaterialTheme.colorScheme) {
     val list = List(size = 24) {
-        if (it != 1) {
-            HourlyWeather(description = "cloudy", iconId = R.drawable.ic_sky_32, 10, 10)
-        } else {
-            HourlyWeather(description = "cloudy", iconId = R.drawable.ic_sky_32, -10, -10)
-        }
+        HourlyWeather(description = "cloudy", iconId = R.drawable.ic_sky_32, 10, 10)
     }
     LazyRow(
         modifier = modifier.fillMaxSize(),

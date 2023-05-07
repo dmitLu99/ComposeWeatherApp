@@ -11,20 +11,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-
-sealed class BottomSheetListItem(open val nameResId: Int, open val onClick: () -> Unit) {
-
-    data class NamedBottomSheetListItem(
-        override val nameResId: Int,
-        override val onClick: () -> Unit
-    ) : BottomSheetListItem(nameResId, onClick)
-
-    data class ImagedBottomSheetListItem(
-        override val nameResId: Int,
-        val imageResId: Int,
-        override val onClick: () -> Unit
-    ) : BottomSheetListItem(nameResId, onClick)
-}
+import com.loodmeet.weatherapp.ui.models.BottomSheetListItem
 
 @Composable
 fun BottomSheetContent(
@@ -91,7 +78,7 @@ fun BottomSheetItem(items: List<BottomSheetListItem>) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items.forEachIndexed { index, item ->
-                BottomSheetListItem(item = item, modifier = Modifier.height(50.dp))
+                BaseBottomSheetListItem(item = item, modifier = Modifier.height(50.dp))
                 if (index != items.size - 1) Divider()
             }
         }
@@ -99,7 +86,7 @@ fun BottomSheetItem(items: List<BottomSheetListItem>) {
 }
 
 @Composable
-fun BottomSheetListItem(
+fun BaseBottomSheetListItem(
     item: BottomSheetListItem,
     modifier: Modifier = Modifier
 ) {
