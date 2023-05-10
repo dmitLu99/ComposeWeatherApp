@@ -30,22 +30,28 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import com.loodmeet.weatherapp.core.models.Named
 import com.loodmeet.weatherapp.core.models.UnitOfMeasurement
-
-data class TabItem(val title: String, val screen: @Composable () -> Unit)
+import com.loodmeet.weatherapp.ui.models.MainScreenTabItem
+import com.loodmeet.weatherapp.ui.veiw_models.MainScreenViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 
 @OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
-fun MainScreen() = with(MaterialTheme.colorScheme) {
+fun MainScreen(viewModel: MainScreenViewModel = viewModel()) = with(MaterialTheme.colorScheme) {
+
+    viewModel.fetchWeather()
+    val weather = viewModel.weatherData.value
 
     val tabs = listOf(
-        TabItem("Today") { WeatherScreen() },
-        TabItem("Tomorrow") { WeatherScreen() },
-        TabItem("Mon, 3 Feb") { WeatherScreen() },
-        TabItem("Mon, 3 Feb") { WeatherScreen() },
-        TabItem("Mon, 3 Feb") { WeatherScreen() },
-        TabItem("Mon, 3 Feb") { WeatherScreen() },
-        TabItem("Mon, 3 Feb") { WeatherScreen() },
+        MainScreenTabItem("Today") { WeatherScreen(weather) },
+        MainScreenTabItem("Tomorrow") { WeatherScreen(weather ) },
+        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
+        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
+        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
+        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
+        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
     )
 
     val scope = rememberCoroutineScope()
@@ -110,7 +116,10 @@ fun MainScreen() = with(MaterialTheme.colorScheme) {
         ),
         onClick = topNamedItemsOnClick,
         isClicked = { item -> item == selectedWindSpeed },
-        onSelect = { item -> selectedWindSpeed = item }
+        onSelect = { item ->
+            selectedWindSpeed = item
+            viewModel.changeWindSpeedUnit(item)
+        }
     )
 
     val precipitationItems = mapToBottomSheetListItem(
@@ -143,7 +152,7 @@ fun MainScreen() = with(MaterialTheme.colorScheme) {
 
     ModalBottomSheetLayout(
         sheetBackgroundColor = background,
-        sheetContent = { BottomSheetContent(topItems = unitItems, showDragHandle = false) },
+        sheetContent = { BottomSheetContent(topItems = unitItems, showDragHandle = true) },
         sheetShape = roundedShape,
         sheetState = mainModalBottomSheetState
     ) {
@@ -206,7 +215,7 @@ fun TopAppBar(moreButtonOnClick: () -> Unit = {}) = with(MaterialTheme.colorSche
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Tabs(tabs: List<TabItem>) = with(MaterialTheme.colorScheme) {
+fun Tabs(tabs: List<MainScreenTabItem>) = with(MaterialTheme.colorScheme) {
 
     val pagerState = rememberPagerState()
 
@@ -236,7 +245,12 @@ fun Tabs(tabs: List<TabItem>) = with(MaterialTheme.colorScheme) {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun TabItem(modifier: Modifier = Modifier, tab: TabItem, index: Int, pagerState: PagerState) =
+fun TabItem(
+    modifier: Modifier = Modifier,
+    tab: MainScreenTabItem,
+    index: Int,
+    pagerState: PagerState
+) =
     with(MaterialTheme.colorScheme) {
 
         val scope = rememberCoroutineScope()
@@ -266,7 +280,7 @@ fun TabItem(modifier: Modifier = Modifier, tab: TabItem, index: Int, pagerState:
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Pager(tabs: List<TabItem>, pagerState: PagerState) {
+fun Pager(tabs: List<MainScreenTabItem>, pagerState: PagerState) {
 
     HorizontalPager(
         state = pagerState,

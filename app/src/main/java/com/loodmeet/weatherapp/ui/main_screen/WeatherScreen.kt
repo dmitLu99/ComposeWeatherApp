@@ -18,49 +18,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dmitLugg.weatherapp.R
-import com.loodmeet.weatherapp.core.models.UnitsOfMeasurementResIds
-import com.loodmeet.weatherapp.core.models.UnitsOfMeasurementResIds.Companion.TemperatureUnits.CELSIUS
-import com.loodmeet.weatherapp.core.models.UnitsOfMeasurementResIds.Companion.WindSpeedUnits.METRES_PER_SECOND
-import com.loodmeet.weatherapp.core.models.UnitsOfMeasurementResIds.Companion.PrecipitationUnits.MILLIMETER
-
-data class Weather(
-    val descriptionResId: Int,
-    val iconResId: Int,
-    val temperatureMax: Int,
-    val temperatureMin: Int,
-    val sunrise: String,
-    val sunset: String,
-    val apparentTemperatureMin: Int,
-    val apparentTemperatureMax: Int,
-    val windSpeed: Double,
-    val windDirectionIconResId: Int,
-    val precipitationSum: Int,
-    val unitsOfMeasurementResIds: UnitsOfMeasurementResIds
-)
-
-val units = UnitsOfMeasurementResIds(
-    temperatureUnitResId = CELSIUS,
-    windSpeedUnitResId = METRES_PER_SECOND,
-    precipitationUnitResId = MILLIMETER
-)
-
-val weather = Weather(
-    descriptionResId = R.string.cloudy,
-    iconResId = R.drawable.ic_sky_32,
-    temperatureMax = 10,
-    temperatureMin = 10,
-    sunrise = "10:10",
-    sunset = "10:10",
-    apparentTemperatureMax = 10,
-    apparentTemperatureMin = 10,
-    windSpeed = 10.1,
-    windDirectionIconResId = R.drawable.ic_person_outlined,
-    precipitationSum = 10,
-    unitsOfMeasurementResIds = units
-)
+import com.loodmeet.weatherapp.core.utils.Config
+import com.loodmeet.weatherapp.ui.models.Weather
+import com.loodmeet.weatherapp.ui.veiw_models.MainScreenViewModel
 
 @Composable
-fun WeatherScreen() {
+fun WeatherScreen(weather: Weather) {
 
     Surface(color = Color.Transparent, contentColor = MaterialTheme.colorScheme.onBackground) {
 
@@ -87,13 +50,13 @@ fun WeatherScreen() {
                         .weight(0.5f)
                         .fillMaxWidth()
 
-                    SunriseAndSunset(modifier = rowModifier)
+                    SunriseAndSunset(modifier = rowModifier, weather = weather)
                     Divider(dividerModifier)
-                    ApparentTemperature(modifier = rowModifier)
+                    ApparentTemperature(modifier = rowModifier, weather = weather)
                     Divider(dividerModifier)
-                    Wind(modifier = rowModifier)
+                    Wind(modifier = rowModifier, weather = weather)
                     Divider(dividerModifier)
-                    PrecipitationSum(modifier = rowModifier)
+                    PrecipitationSum(modifier = rowModifier, weather = weather)
                 }
             }
         }
@@ -146,36 +109,33 @@ fun WeatherCard(modifier: Modifier = Modifier, weather: Weather) {
     }
 }
 
-data class HourlyWeather(
-    val description: String,
-    val iconId: Int,
-    val temperatureMin: Int,
-    val temperatureMax: Int
-)
-
 @Composable
 fun TopHourlyWeather(
     modifier: Modifier = Modifier,
     weather: Weather,
     iconSize: Dp = 56.dp,
 ) = with(MaterialTheme.colorScheme) {
-    val list = List(size = 24) {
-        HourlyWeather(description = "cloudy", iconId = R.drawable.ic_sky_32, 10, 10)
-    }
+
     LazyRow(
         modifier = modifier.fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically,
         contentPadding = PaddingValues(horizontal = 5.dp)
     ) {
-        items(list) { item ->
+        items(weather.hourlyWeather) { item ->
             OutlinedCard(modifier = Modifier.padding(horizontal = 5.dp)) {
                 Column(
                     verticalArrangement = Arrangement.SpaceEvenly,
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .padding(5.dp)
-                        .width(70.dp)
+                        .width(80.dp)
                 ) {
+                    Text(
+                        text = item.time,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = onSecondaryContainer,
+                        modifier = Modifier.padding(vertical = 3.dp)
+                    )
                     Icon(
                         painter = painterResource(id = item.iconId),
                         contentDescription = null,
@@ -183,7 +143,7 @@ fun TopHourlyWeather(
                         tint = onPrimaryContainer
                     )
                     Text(
-                        text = "${item.temperatureMin}° / ${item.temperatureMax}°",
+                        text = "${item.temperature}°",
                         style = MaterialTheme.typography.bodyLarge,
                         color = onSecondaryContainer
                     )
@@ -249,7 +209,11 @@ fun TopDailyWeather(
 }
 
 @Composable
-fun SunriseAndSunset(modifier: Modifier = Modifier, progress: Float = 0.6f) {
+fun SunriseAndSunset(
+    modifier: Modifier = Modifier,
+    progress: Float = 0.6f,
+    weather: Weather
+) {
 
     val progressIndicatorModifier = Modifier
         .fillMaxWidth(fraction = 0.85f)
@@ -273,7 +237,7 @@ fun SunriseAndSunset(modifier: Modifier = Modifier, progress: Float = 0.6f) {
 }
 
 @Composable
-fun ApparentTemperature(modifier: Modifier = Modifier) {
+fun ApparentTemperature(modifier: Modifier = Modifier, weather: Weather) {
 
     TextRow(modifier = modifier) {
         Text(
@@ -285,7 +249,7 @@ fun ApparentTemperature(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun Wind(modifier: Modifier = Modifier) {
+fun Wind(modifier: Modifier = Modifier, weather: Weather) {
 
     TextRow(modifier = modifier) {
         Text(text = "${stringResource(R.string.wind)}:")
@@ -299,11 +263,7 @@ fun Wind(modifier: Modifier = Modifier) {
                 modifier = Modifier.size(24.dp)
             )
             Text(
-                text = "${weather.windSpeed} ${
-                    stringResource(
-                        id = weather.unitsOfMeasurementResIds.windSpeedUnitResId
-                    )
-                }",
+                text = "${weather.windSpeed} ${stringResource(id = weather.windSpeedUnit.unitResId)}",
                 modifier = Modifier
             )
         }
@@ -311,16 +271,12 @@ fun Wind(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun PrecipitationSum(modifier: Modifier = Modifier) {
+fun PrecipitationSum(modifier: Modifier = Modifier, weather: Weather) {
 
     TextRow(modifier = modifier) {
         Text(text = "${stringResource(R.string.precipitation_sum)}:")
         Text(
-            text = "${weather.precipitationSum} ${
-                stringResource(
-                    id = weather.unitsOfMeasurementResIds.precipitationUnitResId
-                )
-            }"
+            text = "${weather.precipitationSum} ${stringResource(id = weather.precipitationUnit.unitResId)}"
         )
     }
 }
