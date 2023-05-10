@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    kotlin("kapt")
 }
 
 android {
@@ -59,11 +60,17 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.6.1")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+    // dagger
+    implementation("com.google.dagger:dagger:2.42")
+    kapt("com.google.dagger:dagger-compiler:2.42")
+
+    // retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
     // Pager
     implementation("com.google.accompanist:accompanist-pager:0.29.0-alpha")
     implementation("com.google.accompanist:accompanist-pager-indicators:0.29.0-alpha")
-
 
     val composeVersion  = "1.2.1"
 

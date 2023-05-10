@@ -38,16 +38,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import com.loodmeet.weatherapp.core.utils.Config
+import com.loodmeet.weatherapp.ui.models.Weather
 
 @Preview
 @Composable
-fun MainScreen(viewModel: MainScreenViewModel = viewModel()) = with(MaterialTheme.colorScheme) {
+fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
 
     if (viewModel.weatherData.value == null) {
         Init()
         viewModel.fetchWeather()
     } else {
-        MainView()
+        MainView(weather = viewModel.weatherData.value!!)
     }
 }
 
@@ -65,17 +66,16 @@ fun Init() {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MainView(viewModel: MainScreenViewModel = viewModel()) = with(MaterialTheme.colorScheme) {
-    val weather = viewModel.weatherData.value
+fun MainView(viewModel: MainScreenViewModel = viewModel(), weather: Weather) = with(MaterialTheme.colorScheme) {
 
     val tabs = listOf(
-        MainScreenTabItem("Today") { WeatherScreen(weather!!) },
-        MainScreenTabItem("Tomorrow") { WeatherScreen(weather!!) },
-        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather!!) },
-        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather!!) },
-        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather!!) },
-        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather!!) },
-        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather!!) },
+        MainScreenTabItem("Today") { WeatherScreen(weather) },
+        MainScreenTabItem("Tomorrow") { WeatherScreen(weather) },
+        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
+        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
+        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
+        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
+        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
     )
 
     val scope = rememberCoroutineScope()
