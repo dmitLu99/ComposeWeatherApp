@@ -35,23 +35,47 @@ import com.loodmeet.weatherapp.ui.veiw_models.MainScreenViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import com.loodmeet.weatherapp.core.utils.Config
 
-@OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel = viewModel()) = with(MaterialTheme.colorScheme) {
 
-    viewModel.fetchWeather()
+    if (viewModel.weatherData.value == null) {
+        Init()
+        viewModel.fetchWeather()
+    } else {
+        MainView()
+    }
+}
+
+@Composable
+fun Init() {
+
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        androidx.compose.material3.CircularProgressIndicator(Modifier.fillMaxSize(0.1f))
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun MainView(viewModel: MainScreenViewModel = viewModel()) = with(MaterialTheme.colorScheme) {
     val weather = viewModel.weatherData.value
 
     val tabs = listOf(
-        MainScreenTabItem("Today") { WeatherScreen(weather) },
-        MainScreenTabItem("Tomorrow") { WeatherScreen(weather ) },
-        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
-        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
-        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
-        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
-        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
+        MainScreenTabItem("Today") { WeatherScreen(weather!!) },
+        MainScreenTabItem("Tomorrow") { WeatherScreen(weather!!) },
+        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather!!) },
+        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather!!) },
+        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather!!) },
+        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather!!) },
+        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather!!) },
     )
 
     val scope = rememberCoroutineScope()
@@ -158,7 +182,12 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) = with(MaterialThem
     ) {
         ModalBottomSheetLayout(
             sheetBackgroundColor = background,
-            sheetContent = { BottomSheetContent(topItems = topItems, bottomItems = bottomItems) },
+            sheetContent = {
+                BottomSheetContent(
+                    topItems = topItems,
+                    bottomItems = bottomItems
+                )
+            },
             sheetShape = roundedShape,
             sheetState = modalBottomSheetState
         ) {
@@ -176,6 +205,7 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) = with(MaterialThem
             }
         }
     }
+//    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -6,11 +6,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.dmitLugg.weatherapp.R
 import com.loodmeet.weatherapp.core.models.UnitOfMeasurement
 import com.loodmeet.weatherapp.core.utils.Config
 import com.loodmeet.weatherapp.ui.models.HourlyWeather
 import com.loodmeet.weatherapp.ui.models.Weather
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainScreenViewModel : ViewModel() {
 
@@ -40,10 +43,16 @@ class MainScreenViewModel : ViewModel() {
         precipitationUnit = UnitOfMeasurement.PrecipitationUnit.Millimeter
     )
 
-    var weatherData = mutableStateOf(weather)
-
+    var weatherData = mutableStateOf<Weather?>(null)
+    var isInit = mutableStateOf(true)
     fun fetchWeather() {
-//        weatherData.value = weather
+        viewModelScope.launch {
+            delay(5000)
+            isInit.value = false
+            weatherData.value = weather
+            changeWindSpeedUnit(unit = UnitOfMeasurement.WindSpeedUnit.MetresPerSecond)
+        }
+
     }
 
     fun changeWindSpeedUnit(unit: UnitOfMeasurement.WindSpeedUnit) {
