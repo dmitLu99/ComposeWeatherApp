@@ -26,6 +26,10 @@ open class MeasurementUnit(
             unitResId = R.string.fahrenheit,
             requestName = "fahrenheit"
         )
+
+        companion object {
+            fun getList() = listOf(Celsius, Fahrenheit)
+        }
     }
     open class WindUnitSpeedUnit private constructor(
         override val unitResId: Int,
@@ -47,6 +51,10 @@ open class MeasurementUnit(
             unitResId = R.string.knots,
             requestName = "kn"
         )
+        companion object {
+            fun getList() = listOf(KilometresPerHour, MetresPerSecond, MilesPerHour, Knots)
+        }
+
     }
     open class PrecipitationUnit private constructor(
         override val unitResId: Int,
@@ -60,5 +68,8 @@ open class MeasurementUnit(
             unitResId = R.string.inch,
             requestName = "inch"
         )
+        companion object {
+            fun getList() = listOf(Millimeter, Inch)
+        }
     }
 }

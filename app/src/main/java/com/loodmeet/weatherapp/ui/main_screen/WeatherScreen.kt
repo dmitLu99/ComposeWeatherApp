@@ -264,11 +264,11 @@ fun Wind(modifier: Modifier = Modifier, weather: Weather) {
             modifier = Modifier,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Outlined.ArrowBack,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp)
-            )
+//            Icon(
+//                imageVector = Icons.Outlined.ArrowBack,
+//                contentDescription = null,
+//                modifier = Modifier.size(24.dp)
+//            )
             Text(
                 text = "${weather.windSpeed} ${stringResource(id = weather.measurementUnitsSet.windSpeedUnit.unitResId)}",
                 modifier = Modifier

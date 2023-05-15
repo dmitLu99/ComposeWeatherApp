@@ -37,9 +37,9 @@ class WeatherResponseMapperImpl @Inject constructor() : WeatherResponseMapper {
                 LocalDateTime.parse(response.daily.sunrise[0], hourlyResponseFormatter)
             val sunsetTime = LocalDateTime.parse(response.daily.sunset[0], hourlyResponseFormatter)
 
-            var offset = 0
+            var offset = LocalDateTime.now().hour
             return@withContext List(size = 7) { dailyIndex ->
-                if (dailyIndex == 0) offset = LocalDateTime.now().hour
+                if (dailyIndex != 0) offset = 0
 
                 Weather(
                     date = dailyFormatter.format(

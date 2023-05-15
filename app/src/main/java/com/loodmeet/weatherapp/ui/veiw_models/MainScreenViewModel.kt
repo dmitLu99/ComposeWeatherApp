@@ -35,14 +35,19 @@ class MainScreenViewModel(
         fetchWeather()
     }
 
-    fun fetchWeather() {
+    private fun fetchWeather() {
         viewModelScope.launch {
             isLoading.value = true
-            location = fetchLocationUseCase.execute()
-            measurementUnitsSet = fetchMeasurementUnitsSet.execute()
-            weatherData.clear()
-            weatherData.addAll(fetchWeatherUseCase.execute())
-            isLoading.value = false
+            try {
+                location = fetchLocationUseCase.execute()
+                measurementUnitsSet = fetchMeasurementUnitsSet.execute()
+                weatherData.clear()
+                weatherData.addAll(fetchWeatherUseCase.execute())
+                isLoading.value = false
+            } catch (e: Exception) {
+                isLoading.value = true
+            }
+
         }
     }
 
