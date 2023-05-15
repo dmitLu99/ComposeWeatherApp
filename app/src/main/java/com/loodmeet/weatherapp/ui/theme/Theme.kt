@@ -1,6 +1,7 @@
 package com.loodmeet.weatherapp.ui.theme
 
 import android.app.Activity
+import android.content.pm.ActivityInfo
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -81,6 +82,9 @@ fun ComposeWeatherAppTheme(
             }
         }
     }
+    val context = LocalContext.current
+
+    (context as? Activity)?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
     MaterialTheme(
         colorScheme = colorScheme,

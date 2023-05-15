@@ -7,8 +7,11 @@ object Config {
     object LOG {
 
         const val UI_LOG_TAG = "UILogger"
+        const val NETWORK_TAG = "NetworkLogger"
 
-        fun logDebug(message: String) { Log.d(UI_LOG_TAG, message) }
+        fun logDebug(message: String) {
+            Log.d(UI_LOG_TAG, message)
+        }
     }
 
     object NAVIGATION {
