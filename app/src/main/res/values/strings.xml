@@ -41,7 +41,28 @@
     <string name="temperature_unit">Температура</string>
     <string name="precipitation_unit">Сумма осадков</string>
     <string name="wind_speed_unit">Скорость ветра</string>
-
     <string name="clear_sky">Безоблачно</string>
     <string name="cloudy">Облачно</string>
+    <string name="mainly_clear">В основном ясно</string>
+    <string name="partly_cloudy">Переменная облачность</string>
+    <string name="overcast">Пасмурно</string>
+    <string name="fog">Tуман</string>
+    <string name="depositing_rime_fog">Осаждающий иней туман</string>
+    <string name="drizzle">Mелкий дождь</string>
+    <string name="slight_intensity_rain">Небольшой дождь</string>
+    <string name="moderate_intensity_rain">Дождь</string>
+    <string name="heavy_intensity_rain">Проливной дождь</string>
+    <string name="light_intensity_freezing_rain">Ливень</string>
+    <string name="heavy_intensity_freezing_rain">Ливень</string>
+    <string name="slight_intensity_snow">Небольшой снег</string>
+    <string name="moderate_intensity_snow">Снег</string>
+    <string name="heavy_intensity_snow">Снегопад</string>
+    <string name="snow_grains">Снег</string>
+    <string name="rain_showers">Ливень</string>
+    <string name="snow_showers">Снег</string>
+    <string name="slight_thunderstorm">Небольшая гроза</string>
+    <string name="thunderstorm_with_hail">Гроза с градом</string>
+    <string name="unknown" translatable="false">Unknown</string>
+
+
 </resources>

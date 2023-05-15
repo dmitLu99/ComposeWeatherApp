@@ -6,15 +6,14 @@ data class Weather(
     val date: String,
     val descriptionResId: Int,
     val iconResId: Int,
-    val temperatureMax: Int,
-    val temperatureMin: Int,
+    val temperatureMax: String,
+    val temperatureMin: String,
     val sunrise: String,
     val sunset: String,
-    val apparentTemperatureMin: Int,
-    val apparentTemperatureMax: Int,
+    val apparentTemperatureMin: String,
+    val apparentTemperatureMax: String,
     val windSpeed: Double,
-    val windDirectionIconResId: Int,
     val precipitationSum: Int,
     val hourlyWeather: List<HourlyWeather>,
-    val measurementUnitsSet: MeasurementUnitsSet
+    var measurementUnitsSet: MeasurementUnitsSet
 )

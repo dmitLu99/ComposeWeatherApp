@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.loodmeet.weatherapp.core.models.Location
 import com.loodmeet.weatherapp.core.models.MeasurementUnitsSet
-import com.loodmeet.weatherapp.domain.FetchWeatherUseCase
+import com.loodmeet.weatherapp.domain.use_case.FetchWeatherUseCase
 import com.loodmeet.weatherapp.ui.models.Weather
 import kotlinx.coroutines.launch
 import javax.inject.Inject

@@ -18,10 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dmitLugg.weatherapp.R
-import com.loodmeet.weatherapp.core.models.MeasurementUnitsSet
-import com.loodmeet.weatherapp.core.utils.Config
 import com.loodmeet.weatherapp.ui.models.Weather
-import com.loodmeet.weatherapp.ui.veiw_models.MainScreenViewModel
 
 @Composable
 fun WeatherScreen(weather: Weather) {
@@ -138,7 +135,7 @@ fun TopHourlyWeather(
                         modifier = Modifier.padding(vertical = 3.dp)
                     )
                     Icon(
-                        painter = painterResource(id = item.iconId),
+                        painter = painterResource(id = item.iconResId),
                         contentDescription = null,
                         modifier = Modifier.size(iconSize),
                         tint = onPrimaryContainer
@@ -149,7 +146,7 @@ fun TopHourlyWeather(
                         color = onSecondaryContainer
                     )
                     Text(
-                        text = item.description,
+                        text = stringResource(id = item.descriptionResId),
                         style = MaterialTheme.typography.bodyLarge,
                         color = onSecondaryContainer,
                         modifier = Modifier.padding(vertical = 3.dp)
