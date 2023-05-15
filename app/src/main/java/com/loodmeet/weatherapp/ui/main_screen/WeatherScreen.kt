@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dmitLugg.weatherapp.R
+import com.loodmeet.weatherapp.core.models.MeasurementUnitsSet
 import com.loodmeet.weatherapp.core.utils.Config
 import com.loodmeet.weatherapp.ui.models.Weather
 import com.loodmeet.weatherapp.ui.veiw_models.MainScreenViewModel
@@ -263,7 +264,7 @@ fun Wind(modifier: Modifier = Modifier, weather: Weather) {
                 modifier = Modifier.size(24.dp)
             )
             Text(
-                text = "${weather.windSpeed} ${stringResource(id = weather.windSpeedUnit.unitResId)}",
+                text = "${weather.windSpeed} ${stringResource(id = weather.measurementUnitsSet.windSpeedUnit.unitResId)}",
                 modifier = Modifier
             )
         }
@@ -276,7 +277,7 @@ fun PrecipitationSum(modifier: Modifier = Modifier, weather: Weather) {
     TextRow(modifier = modifier) {
         Text(text = "${stringResource(R.string.precipitation_sum)}:")
         Text(
-            text = "${weather.precipitationSum} ${stringResource(id = weather.precipitationUnit.unitResId)}"
+            text = "${weather.precipitationSum} ${stringResource(id = weather.measurementUnitsSet.precipitationUnit.unitResId)}"
         )
     }
 }

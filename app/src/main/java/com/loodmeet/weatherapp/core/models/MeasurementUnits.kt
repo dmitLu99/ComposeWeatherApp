@@ -2,35 +2,10 @@ package com.loodmeet.weatherapp.core.models
 
 import com.dmitLugg.weatherapp.R
 
-@Deprecated("")
-data class UnitsOfMeasurementResIds(
-    val temperatureUnitResId: Int,
-    val windSpeedUnitResId: Int,
-    val precipitationUnitResId: Int
-) {
-    companion object {
-        object TemperatureUnits {
-            const val CELSIUS = R.string.celsius
-            const val FAHRENHEIT = R.string.fahrenheit
-        }
-
-        object WindSpeedUnits {
-            const val METRES_PER_SECOND = R.string.metres_per_second
-            const val KILOMETRES_PER_HOUR = R.string.kilometres_per_hour
-            const val MILES_PER_HOUR = R.string.miles_per_hour
-            const val KNOTS = R.string.knots
-        }
-
-        object PrecipitationUnits {
-            const val MILLIMETER = R.string.millimeter
-            const val INCH = R.string.inch
-        }
-    }
-}
 interface Named {
     val nameResId: Int
 }
-open class UnitOfMeasurement(
+open class MeasurementUnit(
     open val unitResId: Int,
     open val requestName: String
 ) : Named {
@@ -38,10 +13,11 @@ open class UnitOfMeasurement(
     override val nameResId: Int
         get() = unitResId
 
-    open class TemperatureUnit(
+    open class TemperatureUnit private constructor(
         override val unitResId: Int,
         override val requestName: String
-    ) : UnitOfMeasurement(unitResId = unitResId, requestName = requestName) {
+    ) : MeasurementUnit(unitResId = unitResId, requestName = requestName) {
+
         object Celsius : TemperatureUnit(
             unitResId = R.string.celsius,
             requestName = ""
@@ -51,31 +27,31 @@ open class UnitOfMeasurement(
             requestName = "fahrenheit"
         )
     }
-    open class WindSpeedUnit(
+    open class WindUnitSpeedUnit private constructor(
         override val unitResId: Int,
         override val requestName: String
-    ) : UnitOfMeasurement(unitResId = unitResId, requestName = requestName) {
-        object KilometresPerHour : WindSpeedUnit(
+    ) : MeasurementUnit(unitResId = unitResId, requestName = requestName) {
+        object KilometresPerHour : WindUnitSpeedUnit(
             unitResId = R.string.kilometres_per_hour,
             requestName = ""
         )
-        object MetresPerSecond : WindSpeedUnit(
+        object MetresPerSecond : WindUnitSpeedUnit(
             unitResId = R.string.metres_per_second,
             requestName = "ms"
         )
-        object MilesPerHour : WindSpeedUnit(
+        object MilesPerHour : WindUnitSpeedUnit(
             unitResId = R.string.miles_per_hour,
             requestName = "mph"
         )
-        object Knots : WindSpeedUnit(
+        object Knots : WindUnitSpeedUnit(
             unitResId = R.string.knots,
             requestName = "kn"
         )
     }
-    open class PrecipitationUnit(
+    open class PrecipitationUnit private constructor(
         override val unitResId: Int,
         override val requestName: String
-    ) : UnitOfMeasurement(unitResId = unitResId, requestName = requestName) {
+    ) : MeasurementUnit(unitResId = unitResId, requestName = requestName) {
         object Millimeter : PrecipitationUnit(
             unitResId = R.string.millimeter,
             requestName = ""

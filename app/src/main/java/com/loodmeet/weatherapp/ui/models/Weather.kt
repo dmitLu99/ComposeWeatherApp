@@ -1,6 +1,7 @@
 package com.loodmeet.weatherapp.ui.models
 
-import com.loodmeet.weatherapp.core.models.UnitOfMeasurement
+import com.loodmeet.weatherapp.core.models.MeasurementUnit
+import com.loodmeet.weatherapp.core.models.MeasurementUnitsSet
 
 data class Weather(
     val descriptionResId: Int,
@@ -15,6 +16,5 @@ data class Weather(
     val windDirectionIconResId: Int,
     val precipitationSum: Int,
     val hourlyWeather: List<HourlyWeather>,
-    val windSpeedUnit: UnitOfMeasurement.WindSpeedUnit,
-    val precipitationUnit: UnitOfMeasurement.PrecipitationUnit
+    val measurementUnitsSet: MeasurementUnitsSet
 )

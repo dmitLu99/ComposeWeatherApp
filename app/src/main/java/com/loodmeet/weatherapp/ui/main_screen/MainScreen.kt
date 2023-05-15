@@ -29,34 +29,33 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import com.loodmeet.weatherapp.core.models.Named
-import com.loodmeet.weatherapp.core.models.UnitOfMeasurement
+import com.loodmeet.weatherapp.core.models.MeasurementUnit
 import com.loodmeet.weatherapp.ui.models.MainScreenTabItem
 import com.loodmeet.weatherapp.ui.veiw_models.MainScreenViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
-import com.loodmeet.weatherapp.core.utils.Config
 import com.loodmeet.weatherapp.ui.models.Weather
 
 @Preview
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
 
-    if (viewModel.weatherData.value == null) {
+    if (viewModel.isLoading.value) {
+        if (viewModel.weatherData.value == null) {
+            viewModel.fetchWeather()
+        }
         Init()
-        viewModel.fetchWeather()
     } else {
         MainView(weather = viewModel.weatherData.value!!)
     }
 }
 
 @Composable
-fun Init() {
-
+fun Init() = with(MaterialTheme.colorScheme) {
     Row(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = background),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -66,147 +65,155 @@ fun Init() {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MainView(viewModel: MainScreenViewModel = viewModel(), weather: Weather) = with(MaterialTheme.colorScheme) {
+fun MainView(viewModel: MainScreenViewModel = viewModel(), weather: Weather) =
+    with(MaterialTheme.colorScheme) {
 
-    val tabs = listOf(
-        MainScreenTabItem("Today") { WeatherScreen(weather) },
-        MainScreenTabItem("Tomorrow") { WeatherScreen(weather) },
-        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
-        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
-        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
-        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
-        MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
-    )
+        val tabs = listOf(
+            MainScreenTabItem("Today") { WeatherScreen(weather) },
+            MainScreenTabItem("Tomorrow") { WeatherScreen(weather) },
+            MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
+            MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
+            MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
+            MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
+            MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
+        )
 
-    val scope = rememberCoroutineScope()
-    val scaffoldState = rememberScaffoldState()
-    val modalBottomSheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true
-    )
-    val mainModalBottomSheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true
-    )
+        val scope = rememberCoroutineScope()
+        val scaffoldState = rememberScaffoldState()
+        val modalBottomSheetState = rememberModalBottomSheetState(
+            initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true
+        )
+        val mainModalBottomSheetState = rememberModalBottomSheetState(
+            initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true
+        )
 
-    var unitItems by remember {
-        mutableStateOf(listOf<BottomSheetListItem>())
-    }
-
-    val bottomSheetListItemOnClick: (items: List<BottomSheetListItem>) -> Unit = { items ->
-        unitItems = items
-        scope.apply {
-            launch { modalBottomSheetState.hide() }
-            launch { mainModalBottomSheetState.show() }
+        var unitItems by remember {
+            mutableStateOf(listOf<BottomSheetListItem>())
         }
-    }
 
-    val savedText = LocalContext.current.getText(R.string.saved).toString()
-    val closeText = LocalContext.current.getText(R.string.close).toString()
-
-    val topNamedItemsOnClick: () -> Unit = {
-        scope.apply {
-            launch { mainModalBottomSheetState.hide() }
-            launch { scaffoldState.snackbarHostState.showSnackbar(savedText, closeText) }
-        }
-    }
-
-    var selectedTemperature: UnitOfMeasurement.TemperatureUnit by remember {
-        mutableStateOf(UnitOfMeasurement.TemperatureUnit.Celsius)
-    }
-
-    var selectedWindSpeed: UnitOfMeasurement.WindSpeedUnit by remember {
-        mutableStateOf(UnitOfMeasurement.WindSpeedUnit.MetresPerSecond)
-    }
-
-    var selectedPrecipitation: UnitOfMeasurement.PrecipitationUnit by remember {
-        mutableStateOf(UnitOfMeasurement.PrecipitationUnit.Millimeter)
-    }
-
-    val temperatureItems = mapToBottomSheetListItem(
-        items = listOf(
-            UnitOfMeasurement.TemperatureUnit.Celsius,
-            UnitOfMeasurement.TemperatureUnit.Fahrenheit
-        ),
-        onClick = topNamedItemsOnClick,
-        isClicked = { item -> item == selectedTemperature },
-        onSelect = { item -> selectedTemperature = item }
-    )
-
-    val windSpeedItems = mapToBottomSheetListItem(
-        items = listOf(
-            UnitOfMeasurement.WindSpeedUnit.KilometresPerHour,
-            UnitOfMeasurement.WindSpeedUnit.MetresPerSecond,
-            UnitOfMeasurement.WindSpeedUnit.MilesPerHour,
-            UnitOfMeasurement.WindSpeedUnit.Knots
-        ),
-        onClick = topNamedItemsOnClick,
-        isClicked = { item -> item == selectedWindSpeed },
-        onSelect = { item ->
-            selectedWindSpeed = item
-            viewModel.changeWindSpeedUnit(item)
-        }
-    )
-
-    val precipitationItems = mapToBottomSheetListItem(
-        items = listOf(
-            UnitOfMeasurement.PrecipitationUnit.Millimeter,
-            UnitOfMeasurement.PrecipitationUnit.Inch
-        ),
-        onClick = topNamedItemsOnClick,
-        isClicked = { item -> item == selectedPrecipitation },
-        onSelect = { item -> selectedPrecipitation = item }
-    )
-
-    val topItems = listOf(
-        BottomSheetListItem.ImagedBottomSheetListItem.LocationItem {}
-    )
-
-    val bottomItems = listOf(
-        BottomSheetListItem.ImagedBottomSheetListItem.TemperatureItem {
-            bottomSheetListItemOnClick(temperatureItems)
-        },
-        BottomSheetListItem.ImagedBottomSheetListItem.WindSpeedItem {
-            bottomSheetListItemOnClick(windSpeedItems)
-        },
-        BottomSheetListItem.ImagedBottomSheetListItem.PrecipitationItem {
-            bottomSheetListItemOnClick(precipitationItems)
-        }
-    )
-
-    val roundedShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-
-    ModalBottomSheetLayout(
-        sheetBackgroundColor = background,
-        sheetContent = { BottomSheetContent(topItems = unitItems, showDragHandle = true) },
-        sheetShape = roundedShape,
-        sheetState = mainModalBottomSheetState
-    ) {
-        ModalBottomSheetLayout(
-            sheetBackgroundColor = background,
-            sheetContent = {
-                BottomSheetContent(
-                    topItems = topItems,
-                    bottomItems = bottomItems
-                )
-            },
-            sheetShape = roundedShape,
-            sheetState = modalBottomSheetState
-        ) {
-            Scaffold(
-                topBar = {
-                    TopAppBar {
-                        scope.launch {
-                            modalBottomSheetState.apply { if (isVisible) hide() else show() }
-                        }
-                    }
-                },
-                scaffoldState = scaffoldState
-            ) { innerPadding ->
-                Column(Modifier.padding(innerPadding)) { Tabs(tabs = tabs) }
+        val bottomSheetListItemOnClick: (items: List<BottomSheetListItem>) -> Unit = { items ->
+            unitItems = items
+            scope.apply {
+                launch { modalBottomSheetState.hide() }
+                launch { mainModalBottomSheetState.show() }
             }
         }
-    }
+
+        val savedText = LocalContext.current.getText(R.string.saved).toString()
+        val closeText = LocalContext.current.getText(R.string.close).toString()
+
+        val topNamedItemsOnClick: () -> Unit = {
+            scope.apply {
+                launch { mainModalBottomSheetState.hide() }
+                launch { scaffoldState.snackbarHostState.showSnackbar(savedText, closeText) }
+            }
+        }
+        val selectedUnitsSet = viewModel.fetchCurrentMeasurementUnitsSet()
+        var selectedTemperature = selectedUnitsSet.temperatureUnit
+        var selectedWindSpeed = selectedUnitsSet.windSpeedUnit
+        var selectedPrecipitation = selectedUnitsSet.precipitationUnit
+
+        val temperatureItems = mapToBottomSheetListItem(
+            items = listOf(
+                MeasurementUnit.TemperatureUnit.Celsius,
+                MeasurementUnit.TemperatureUnit.Fahrenheit
+            ),
+            onClick = topNamedItemsOnClick,
+            isClicked = { item -> item == selectedTemperature },
+            onSelect = { item ->
+                selectedTemperature = item
+                viewModel.changeMeasurementUnitsSet(
+                    selectedUnitsSet.apply {
+                        temperatureUnit = item
+                    })
+            }
+        )
+
+        val windSpeedItems = mapToBottomSheetListItem(
+            items = listOf(
+                MeasurementUnit.WindUnitSpeedUnit.KilometresPerHour,
+                MeasurementUnit.WindUnitSpeedUnit.MetresPerSecond,
+                MeasurementUnit.WindUnitSpeedUnit.MilesPerHour,
+                MeasurementUnit.WindUnitSpeedUnit.Knots
+            ),
+            onClick = topNamedItemsOnClick,
+            isClicked = { item -> item == selectedWindSpeed },
+            onSelect = { item ->
+                selectedWindSpeed = item
+                viewModel.changeMeasurementUnitsSet(
+                    selectedUnitsSet.apply {
+                        windSpeedUnit = item
+                    })
+            }
+        )
+
+        val precipitationItems = mapToBottomSheetListItem(
+            items = listOf(
+                MeasurementUnit.PrecipitationUnit.Millimeter,
+                MeasurementUnit.PrecipitationUnit.Inch
+            ),
+            onClick = topNamedItemsOnClick,
+            isClicked = { item -> item == selectedPrecipitation },
+            onSelect = { item ->
+                selectedPrecipitation = item
+                viewModel.changeMeasurementUnitsSet(
+                    selectedUnitsSet.apply {
+                        precipitationUnit = item
+                    })
+            }
+        )
+
+        val topItems = listOf(
+            BottomSheetListItem.ImagedBottomSheetListItem.LocationItem {}
+        )
+
+        val bottomItems = listOf(
+            BottomSheetListItem.ImagedBottomSheetListItem.TemperatureItem {
+                bottomSheetListItemOnClick(temperatureItems)
+            },
+            BottomSheetListItem.ImagedBottomSheetListItem.WindSpeedItem {
+                bottomSheetListItemOnClick(windSpeedItems)
+            },
+            BottomSheetListItem.ImagedBottomSheetListItem.PrecipitationItem {
+                bottomSheetListItemOnClick(precipitationItems)
+            }
+        )
+
+        val roundedShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+
+        ModalBottomSheetLayout(
+            sheetBackgroundColor = background,
+            sheetContent = { BottomSheetContent(topItems = unitItems, showDragHandle = true) },
+            sheetShape = roundedShape,
+            sheetState = mainModalBottomSheetState
+        ) {
+            ModalBottomSheetLayout(
+                sheetBackgroundColor = background,
+                sheetContent = {
+                    BottomSheetContent(
+                        topItems = topItems,
+                        bottomItems = bottomItems
+                    )
+                },
+                sheetShape = roundedShape,
+                sheetState = modalBottomSheetState
+            ) {
+                Scaffold(
+                    topBar = {
+                        TopAppBar {
+                            scope.launch {
+                                modalBottomSheetState.apply { if (isVisible) hide() else show() }
+                            }
+                        }
+                    },
+                    scaffoldState = scaffoldState
+                ) { innerPadding ->
+                    Column(Modifier.padding(innerPadding)) { Tabs(tabs = tabs) }
+                }
+            }
+        }
 //    }
-}
+    }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

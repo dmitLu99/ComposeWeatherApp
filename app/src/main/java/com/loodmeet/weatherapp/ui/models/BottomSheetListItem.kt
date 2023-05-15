@@ -1,7 +1,6 @@
 package com.loodmeet.weatherapp.ui.models
 
 import com.dmitLugg.weatherapp.R
-import com.loodmeet.weatherapp.core.models.UnitOfMeasurement
 
 open class BottomSheetListItem(open val nameResId: Int, open val onClick: () -> Unit) {
 
