@@ -1,9 +1,9 @@
 package com.loodmeet.weatherapp.ui.models
 
-import com.loodmeet.weatherapp.core.models.MeasurementUnit
 import com.loodmeet.weatherapp.core.models.MeasurementUnitsSet
 
 data class Weather(
+    val date: String,
     val descriptionResId: Int,
     val iconResId: Int,
     val temperatureMax: Int,

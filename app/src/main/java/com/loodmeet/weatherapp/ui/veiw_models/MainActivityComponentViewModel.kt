@@ -5,6 +5,7 @@ import com.loodmeet.weatherapp.di.DaggerMainActivityComponent
 
 class MainActivityComponentViewModel : ViewModel() {
 
+
     private val component = DaggerMainActivityComponent.create()
     fun getDaggerComponent() = component!!
 }

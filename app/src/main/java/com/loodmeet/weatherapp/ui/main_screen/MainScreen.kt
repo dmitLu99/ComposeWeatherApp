@@ -34,6 +34,7 @@ import com.loodmeet.weatherapp.ui.models.MainScreenTabItem
 import com.loodmeet.weatherapp.ui.veiw_models.MainScreenViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Alignment
+import com.loodmeet.weatherapp.core.models.Location
 import com.loodmeet.weatherapp.ui.models.Weather
 
 @Preview
@@ -41,12 +42,12 @@ import com.loodmeet.weatherapp.ui.models.Weather
 fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
 
     if (viewModel.isLoading.value) {
-        if (viewModel.weatherData.value == null) {
+        if (viewModel.weatherData.value.isEmpty()) {
             viewModel.fetchWeather()
         }
         Init()
     } else {
-        MainView(weather = viewModel.weatherData.value!!)
+        MainView(weatherList = viewModel.weatherData.value)
     }
 }
 
@@ -65,17 +66,17 @@ fun Init() = with(MaterialTheme.colorScheme) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MainView(viewModel: MainScreenViewModel = viewModel(), weather: Weather) =
+fun MainView(viewModel: MainScreenViewModel = viewModel(), weatherList: List<Weather>) =
     with(MaterialTheme.colorScheme) {
 
         val tabs = listOf(
-            MainScreenTabItem("Today") { WeatherScreen(weather) },
-            MainScreenTabItem("Tomorrow") { WeatherScreen(weather) },
-            MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
-            MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
-            MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
-            MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
-            MainScreenTabItem("Mon, 3 Feb") { WeatherScreen(weather) },
+            MainScreenTabItem(weatherList[0].date) { WeatherScreen(weatherList[0]) },
+            MainScreenTabItem(weatherList[1].date) { WeatherScreen(weatherList[1]) },
+            MainScreenTabItem(weatherList[2].date) { WeatherScreen(weatherList[2]) },
+            MainScreenTabItem(weatherList[3].date) { WeatherScreen(weatherList[3]) },
+            MainScreenTabItem(weatherList[4].date) { WeatherScreen(weatherList[4]) },
+            MainScreenTabItem(weatherList[5].date) { WeatherScreen(weatherList[5]) },
+            MainScreenTabItem(weatherList[6].date) { WeatherScreen(weatherList[6]) },
         )
 
         val scope = rememberCoroutineScope()
@@ -87,12 +88,12 @@ fun MainView(viewModel: MainScreenViewModel = viewModel(), weather: Weather) =
             initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true
         )
 
-        var unitItems by remember {
+        var bottomSheetItems by remember {
             mutableStateOf(listOf<BottomSheetListItem>())
         }
 
         val bottomSheetListItemOnClick: (items: List<BottomSheetListItem>) -> Unit = { items ->
-            unitItems = items
+            bottomSheetItems = items
             scope.apply {
                 launch { modalBottomSheetState.hide() }
                 launch { mainModalBottomSheetState.show() }
@@ -108,10 +109,22 @@ fun MainView(viewModel: MainScreenViewModel = viewModel(), weather: Weather) =
                 launch { scaffoldState.snackbarHostState.showSnackbar(savedText, closeText) }
             }
         }
+        var selectedLocation = viewModel.fetchCurrentLocation()
+
         val selectedUnitsSet = viewModel.fetchCurrentMeasurementUnitsSet()
         var selectedTemperature = selectedUnitsSet.temperatureUnit
         var selectedWindSpeed = selectedUnitsSet.windSpeedUnit
         var selectedPrecipitation = selectedUnitsSet.precipitationUnit
+
+        val locationItems = mapToBottomSheetListItem(
+            items = viewModel.fetchLocationList(),
+            onClick = topNamedItemsOnClick,
+            isClicked = { item -> item == selectedLocation },
+            onSelect = { item ->
+                selectedLocation = item
+                viewModel.changeLocation(item)
+            }
+        )
 
         val temperatureItems = mapToBottomSheetListItem(
             items = listOf(
@@ -164,7 +177,9 @@ fun MainView(viewModel: MainScreenViewModel = viewModel(), weather: Weather) =
         )
 
         val topItems = listOf(
-            BottomSheetListItem.ImagedBottomSheetListItem.LocationItem {}
+            BottomSheetListItem.ImagedBottomSheetListItem.LocationItem {
+                bottomSheetListItemOnClick(locationItems)
+            }
         )
 
         val bottomItems = listOf(
@@ -183,7 +198,12 @@ fun MainView(viewModel: MainScreenViewModel = viewModel(), weather: Weather) =
 
         ModalBottomSheetLayout(
             sheetBackgroundColor = background,
-            sheetContent = { BottomSheetContent(topItems = unitItems, showDragHandle = true) },
+            sheetContent = {
+                BottomSheetContent(
+                    topItems = bottomSheetItems,
+                    showDragHandle = true
+                )
+            },
             sheetShape = roundedShape,
             sheetState = mainModalBottomSheetState
         ) {
@@ -200,7 +220,7 @@ fun MainView(viewModel: MainScreenViewModel = viewModel(), weather: Weather) =
             ) {
                 Scaffold(
                     topBar = {
-                        TopAppBar {
+                        TopAppBar(location = selectedLocation) {
                             scope.launch {
                                 modalBottomSheetState.apply { if (isVisible) hide() else show() }
                             }
@@ -212,12 +232,11 @@ fun MainView(viewModel: MainScreenViewModel = viewModel(), weather: Weather) =
                 }
             }
         }
-//    }
     }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(moreButtonOnClick: () -> Unit = {}) = with(MaterialTheme.colorScheme) {
+fun TopAppBar(location: Location, moreButtonOnClick: () -> Unit = {},) = with(MaterialTheme.colorScheme) {
 
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -226,7 +245,7 @@ fun TopAppBar(moreButtonOnClick: () -> Unit = {}) = with(MaterialTheme.colorSche
         ),
         title = {
             Text(
-                "${stringResource(R.string.country_russia)}, ${stringResource(R.string.city_volgograd)}",
+                "${stringResource(location.countryResId)}, ${stringResource(location.cityResId)}",
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -305,7 +324,6 @@ fun TabItem(
             selected = pagerState.currentPage == index,
             onClick = {
                 scope.launch {
-//                            val spring = spring<Float>(stiffness = Spring.StiffnessVeryLow)
                     pagerState.animateScrollToPage(
                         page = index, pageOffset = pagerState.currentPageOffset
                     )
