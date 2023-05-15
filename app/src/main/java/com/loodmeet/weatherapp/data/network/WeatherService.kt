@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 const val DEFAULT_HOURLY_GET = "temperature_2m,weathercode"
-const val DEFAULT_DAILY_GET = "daily=weathercode,temperature_2m_max,temperature_2m_min," +
+const val DEFAULT_DAILY_GET = "weathercode,temperature_2m_max,temperature_2m_min," +
         "apparent_temperature_max,apparent_temperature_min,sunrise,sunset,precipitation_sum,windspeed_10m_max"
 
 interface WeatherService {

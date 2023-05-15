@@ -30,8 +30,8 @@
     <string name="city_moscow">Moscow</string>
     <string name="city_volgograd">Volgograd</string>
 
-    <string name="country_england">England</string>
-    <string name="city_london">London</string>
+    <string name="country_france">France</string>
+    <string name="city_paris">Paris</string>
 
     <string name="country_usa">USA</string>
     <string name="city_washington">Washington</string>

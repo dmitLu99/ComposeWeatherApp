@@ -41,13 +41,10 @@ import com.loodmeet.weatherapp.ui.models.Weather
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
 
-    if (viewModel.isLoading.value) {
-        if (viewModel.weatherData.value.isEmpty()) {
-            viewModel.fetchWeather()
-        }
+    if (viewModel.getIsLoading().value) {
         Init()
     } else {
-        MainView(weatherList = viewModel.weatherData.value)
+        MainView(weatherList = viewModel.getWeatherData())
     }
 }
 
@@ -109,9 +106,9 @@ fun MainView(viewModel: MainScreenViewModel = viewModel(), weatherList: List<Wea
                 launch { scaffoldState.snackbarHostState.showSnackbar(savedText, closeText) }
             }
         }
-        var selectedLocation = viewModel.fetchCurrentLocation()
+        var selectedLocation = viewModel.getLocation()
 
-        val selectedUnitsSet = viewModel.fetchCurrentMeasurementUnitsSet()
+        val selectedUnitsSet = viewModel.getMeasurementUnitsSet()
         var selectedTemperature = selectedUnitsSet.temperatureUnit
         var selectedWindSpeed = selectedUnitsSet.windSpeedUnit
         var selectedPrecipitation = selectedUnitsSet.precipitationUnit
@@ -236,38 +233,39 @@ fun MainView(viewModel: MainScreenViewModel = viewModel(), weatherList: List<Wea
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(location: Location, moreButtonOnClick: () -> Unit = {},) = with(MaterialTheme.colorScheme) {
+fun TopAppBar(location: Location, moreButtonOnClick: () -> Unit = {}) =
+    with(MaterialTheme.colorScheme) {
 
-    CenterAlignedTopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            navigationIconContentColor = onSurface,
-            actionIconContentColor = onSurface
-        ),
-        title = {
-            Text(
-                "${stringResource(location.countryResId)}, ${stringResource(location.cityResId)}",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = { /* doSomething() */ }) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = null
+        CenterAlignedTopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors(
+                navigationIconContentColor = onSurface,
+                actionIconContentColor = onSurface
+            ),
+            title = {
+                Text(
+                    "${stringResource(location.cityResId)}, ${stringResource(location.countryResId)}",
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
+            },
+//        navigationIcon = {
+//            IconButton(onClick = { /* doSomething() */ }) {
+//                Icon(
+//                    imageVector = Icons.Filled.Menu,
+//                    contentDescription = null
+//                )
+//            }
+//        },
+            actions = {
+                IconButton(onClick = moreButtonOnClick) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = null
+                    )
+                }
             }
-        },
-        actions = {
-            IconButton(onClick = moreButtonOnClick) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = null
-                )
-            }
-        }
-    )
-}
+        )
+    }
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -316,7 +314,7 @@ fun TabItem(
             unselectedContentColor = onSecondaryContainer,
             text = {
                 Text(
-                    text = tab.title,
+                    text = tab.title.replaceFirstChar { it.uppercase() },
                     style = MaterialTheme.typography.bodyLarge,
                     color = if (pagerState.currentPage == index) onPrimary else onSurface
                 )

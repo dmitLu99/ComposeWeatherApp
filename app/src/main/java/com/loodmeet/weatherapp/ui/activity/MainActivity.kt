@@ -26,15 +26,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            Config.LOG.logDebug("1")
             componentViewModel = viewModel()
             component = componentViewModel.getDaggerComponent()
             component.inject(this)
-            Config.LOG.logDebug("2")
 
             ComposeWeatherAppTheme {
-                Config.LOG.logDebug("3")
-
                 AppNavHost(mainScreenViewModelFactory = mainScreenViewModelFactory)
             }
         }

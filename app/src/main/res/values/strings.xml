@@ -29,8 +29,8 @@
     <string name="city_moscow">Москва</string>
     <string name="city_volgograd">Волгоград</string>
 
-    <string name="country_england">Англия</string>
-    <string name="city_london">Лондон</string>
+    <string name="country_france">Франция</string>
+    <string name="city_paris">Париж</string>
 
     <string name="country_usa">США</string>
     <string name="city_washington">Вашингтон</string>

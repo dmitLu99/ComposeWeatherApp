@@ -1,5 +1,6 @@
 package com.loodmeet.weatherapp.ui.main_screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -15,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dmitLugg.weatherapp.R
@@ -120,13 +122,13 @@ fun TopHourlyWeather(
         contentPadding = PaddingValues(horizontal = 5.dp)
     ) {
         items(weather.hourlyWeather) { item ->
-            OutlinedCard(modifier = Modifier.padding(horizontal = 5.dp)) {
+            OutlinedCard(modifier = Modifier.padding(horizontal = 5.dp).fillMaxHeight(fraction = 1f)) {
                 Column(
                     verticalArrangement = Arrangement.SpaceEvenly,
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .padding(5.dp)
-                        .width(80.dp)
+                        .width(110.dp)
                 ) {
                     Text(
                         text = item.time,
@@ -145,12 +147,17 @@ fun TopHourlyWeather(
                         style = MaterialTheme.typography.bodyLarge,
                         color = onSecondaryContainer
                     )
-                    Text(
-                        text = stringResource(id = item.descriptionResId),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = onSecondaryContainer,
-                        modifier = Modifier.padding(vertical = 3.dp)
-                    )
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = stringResource(id = item.descriptionResId),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = onSecondaryContainer,
+                            modifier = Modifier.padding(vertical = 3.dp),
+                            textAlign = TextAlign.Center,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
                 }
             }
         }
@@ -181,7 +188,10 @@ fun TopDailyWeather(
             Text(
                 text = stringResource(id = weather.descriptionResId),
                 style = MaterialTheme.typography.bodyLarge,
-                color = onSecondaryContainer
+                color = onSecondaryContainer,
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 10.dp)
             )
         }
 
@@ -209,7 +219,6 @@ fun TopDailyWeather(
 @Composable
 fun SunriseAndSunset(
     modifier: Modifier = Modifier,
-    progress: Float = 0.6f,
     weather: Weather
 ) {
 
@@ -228,7 +237,7 @@ fun SunriseAndSunset(
             Text(text = "${stringResource(R.string.sunset)}: ${weather.sunset}")
         }
         LinearProgressIndicator(
-            progress = progress,
+            progress = weather.dayLengthIndicator,
             modifier = progressIndicatorModifier
         )
     }

@@ -20,7 +20,7 @@ open class MeasurementUnit(
 
         object Celsius : TemperatureUnit(
             unitResId = R.string.celsius,
-            requestName = ""
+            requestName = "celsius"
         )
         object Fahrenheit : TemperatureUnit(
             unitResId = R.string.fahrenheit,
@@ -33,7 +33,7 @@ open class MeasurementUnit(
     ) : MeasurementUnit(unitResId = unitResId, requestName = requestName) {
         object KilometresPerHour : WindUnitSpeedUnit(
             unitResId = R.string.kilometres_per_hour,
-            requestName = ""
+            requestName = "kmh"
         )
         object MetresPerSecond : WindUnitSpeedUnit(
             unitResId = R.string.metres_per_second,
@@ -54,7 +54,7 @@ open class MeasurementUnit(
     ) : MeasurementUnit(unitResId = unitResId, requestName = requestName) {
         object Millimeter : PrecipitationUnit(
             unitResId = R.string.millimeter,
-            requestName = ""
+            requestName = "mm"
         )
         object Inch : PrecipitationUnit(
             unitResId = R.string.inch,

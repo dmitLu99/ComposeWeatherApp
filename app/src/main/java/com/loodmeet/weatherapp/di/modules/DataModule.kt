@@ -3,6 +3,7 @@ package com.loodmeet.weatherapp.di.modules
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.loodmeet.weatherapp.data.network.WeatherService
+import com.loodmeet.weatherapp.di.AppScope
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -14,9 +15,11 @@ private const val BASE_URL = "https://api.open-meteo.com/v1/"
 class DataModule {
 
     @Provides
+    @AppScope
     fun provideGson(): Gson = GsonBuilder().create()
 
     @Provides
+    @AppScope
     fun provideDefaultRetrofitClient(gson: Gson): WeatherService =
         Retrofit.Builder()
             .baseUrl(BASE_URL)

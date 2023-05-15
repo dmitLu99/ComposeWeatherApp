@@ -7,11 +7,8 @@ import com.loodmeet.weatherapp.data.models.response.WeatherResponse
 interface Repository {
 
     suspend fun fetchLocation(): Location
-    suspend fun saveLocation()
+    suspend fun saveLocation(location: Location)
     suspend fun fetchMeasurementUnitsSet(): MeasurementUnitsSet
-    suspend fun saveMeasurementUnitsSet()
-    suspend fun fetchWeather(
-        location: Location,
-        measurementUnitsSet: MeasurementUnitsSet
-    ): WeatherResponse
+    suspend fun saveMeasurementUnitsSet(measurementUnitsSet: MeasurementUnitsSet)
+    suspend fun fetchWeather(): WeatherResponse
 }
