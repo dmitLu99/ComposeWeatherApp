@@ -26,7 +26,7 @@ class FetchWeatherUseCase @Inject constructor(
         )
     }
 
-    fun fetchTestData() = List(size = 7){
+    fun fetchTestData() = List(size = 7) {
         Weather(
             date = "1",
             descriptionResId = R.string.partly_cloudy,

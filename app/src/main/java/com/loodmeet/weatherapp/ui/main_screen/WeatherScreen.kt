@@ -1,5 +1,6 @@
 package com.loodmeet.weatherapp.ui.main_screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -12,11 +13,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.RootGroupName
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dmitLugg.weatherapp.R
@@ -35,7 +44,7 @@ fun WeatherScreen(weather: Weather) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val dailyWeatherCardModifier = Modifier
-                .weight(1f)
+                .weight(1.2f)
                 .padding(vertical = 30.dp)
 
             WeatherCard(modifier = dailyWeatherCardModifier, weather = weather)
@@ -83,7 +92,7 @@ fun WeatherCard(modifier: Modifier = Modifier, weather: Weather) {
                     .fillMaxWidth()
                     .padding(top = 8.dp, end = 8.dp)
             ) {
-                Icon(
+                if (isDaily) Icon(
                     painter = painterResource(id = R.drawable.outline_info_24),
                     contentDescription = null
                 )
@@ -122,7 +131,9 @@ fun TopHourlyWeather(
         contentPadding = PaddingValues(horizontal = 5.dp)
     ) {
         items(weather.hourlyWeather) { item ->
-            OutlinedCard(modifier = Modifier.padding(horizontal = 5.dp).fillMaxHeight(fraction = 1f)) {
+            OutlinedCard(modifier = Modifier
+                .padding(horizontal = 5.dp)
+                .fillMaxHeight(fraction = 1f)) {
                 Column(
                     verticalArrangement = Arrangement.SpaceEvenly,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -136,11 +147,11 @@ fun TopHourlyWeather(
                         color = onSecondaryContainer,
                         modifier = Modifier.padding(vertical = 3.dp)
                     )
-                    Icon(
-                        painter = painterResource(id = item.iconResId),
+                    Image(
+                        imageVector = ImageVector.vectorResource(id = item.iconResId),
                         contentDescription = null,
                         modifier = Modifier.size(iconSize),
-                        tint = onPrimaryContainer
+                        colorFilter = ColorFilter.tint(blendMode = BlendMode.Modulate, color = Color.White)
                     )
                     Text(
                         text = "${item.temperature}°",
@@ -179,12 +190,18 @@ fun TopDailyWeather(
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Icon(
-                painter = painterResource(id = weather.iconResId),
+            Image(
+                imageVector = ImageVector.vectorResource(id = weather.iconResId),
                 contentDescription = null,
                 modifier = Modifier.size(iconSize),
-                tint = onPrimaryContainer
+                colorFilter = ColorFilter.tint(blendMode = BlendMode.Modulate, color = Color.White)
             )
+//            Icon(
+//                painter = painterResource(id = weather.iconResId),
+//                contentDescription = null,
+//                modifier = Modifier.size(iconSize),
+//                tint = onPrimaryContainer
+//            )
             Text(
                 text = stringResource(id = weather.descriptionResId),
                 style = MaterialTheme.typography.bodyLarge,

@@ -24,6 +24,5 @@ data class DailyWeatherResponse(
     @SerializedName("weathercode")
     val weatherCode: List<Int>,
     @SerializedName("windspeed_10m_max")
-    val windSpeed: List<Double>,
-
+    val windSpeed: List<Double>
 )

@@ -12,7 +12,7 @@
         android:fillColor="#00000000"
         android:pathData="M24.006,23.9951m-9.429,0a9.429,9.429 0,1 1,18.858 0a9.429,9.429 0,1 1,-18.858 0"
         android:strokeWidth="2"
-        android:strokeColor="@color/yellow"
+        android:strokeColor="#ffe524"
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
     <path

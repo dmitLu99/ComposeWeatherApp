@@ -20,6 +20,7 @@ const val TEMPERATURE_KEY = "temperature"
 const val WIND_SPEED_KEY = "wind_speed"
 const val PRECIPITATION_KEY = "precipitation"
 const val LOCATION_KEY = "location"
+const val PREFS_NAME = "com.loodmeet.weatherapp"
 
 @AppScope
 class RepositoryImpl @Inject constructor(
@@ -30,7 +31,7 @@ class RepositoryImpl @Inject constructor(
     private var location: Location = Location.Moscow
     private var measurementUnitsSet: MeasurementUnitsSet = MeasurementUnitsSet()
     private var prefs =
-        application.getSharedPreferences("com.loodmeet.weatherapp", Context.MODE_PRIVATE)
+        application.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     override suspend fun fetchLocation(): Location = withContext(Dispatchers.IO) {
         location =
