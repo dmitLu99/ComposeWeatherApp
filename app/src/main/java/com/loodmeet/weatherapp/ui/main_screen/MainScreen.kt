@@ -75,7 +75,7 @@ fun Error(viewModel: MainScreenViewModel = viewModel()): Unit = with(MaterialThe
                     imageVector = Icons.Default.Refresh,
                     contentDescription = null,
                     tint = surfaceTint,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(56.dp)
                 )
             }
         }

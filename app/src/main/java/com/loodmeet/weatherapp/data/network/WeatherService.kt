@@ -1,8 +1,11 @@
 package com.loodmeet.weatherapp.data.network
 
+import com.loodmeet.weatherapp.data.models.request.WeatherRequest
 import com.loodmeet.weatherapp.data.models.response.WeatherResponse
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 const val DEFAULT_HOURLY_GET = "temperature_2m,weathercode"
@@ -22,11 +25,7 @@ interface WeatherService {
         @Query("timezone", encoded = true) timezone: String = "auto"
     ): Response<WeatherResponse>
 
-    @GET("forecast") suspend fun execute(
-        @Query("location") location: String,
-        @Query("windSpeedUnit", encoded = true) windSpeedUnit: String,
-        @Query("temperatureUnit", encoded = true) temperatureUnit: String,
-        @Query("precipitationUnit", encoded = true) precipitationUnit: String,
-        @Query("timezone", encoded = true) timezone: String = "auto"
+    @POST("forecast") suspend fun execute(
+       @Body request: WeatherRequest
     ): Response<WeatherResponse>
 }

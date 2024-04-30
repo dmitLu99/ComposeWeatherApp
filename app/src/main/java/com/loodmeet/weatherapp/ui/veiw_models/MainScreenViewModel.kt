@@ -46,6 +46,7 @@ class MainScreenViewModel(
                 weatherData.clear()
                 weatherData.addAll(fetchWeatherUseCase.execute())
                 isLoading.value = false
+                isError.value = false
             } catch (e: Exception) {
                 isLoading.value = false
                 isError.value = true

@@ -10,6 +10,7 @@ import com.loodmeet.weatherapp.core.models.Location
 import com.loodmeet.weatherapp.core.models.MeasurementUnit
 import com.loodmeet.weatherapp.core.models.MeasurementUnitsSet
 import com.loodmeet.weatherapp.core.utils.Config
+import com.loodmeet.weatherapp.data.models.request.WeatherRequest
 import com.loodmeet.weatherapp.data.models.response.WeatherResponse
 import com.loodmeet.weatherapp.data.network.WeatherService
 import com.loodmeet.weatherapp.di.AppScope
@@ -82,13 +83,15 @@ class RepositoryImpl @Inject constructor(
     override suspend fun fetchWeather(): WeatherResponse = withContext(Dispatchers.IO) {
         return@withContext try {
             service.execute(
-                location = location.javaClass.name.uppercase(Locale.ROOT),
-                windSpeedUnit = measurementUnitsSet.windSpeedUnit.requestName,
-                temperatureUnit = measurementUnitsSet.temperatureUnit.requestName,
-                precipitationUnit = measurementUnitsSet.precipitationUnit.requestName
+                WeatherRequest(
+                    location = location.javaClass.simpleName.uppercase(Locale.ROOT),
+                    windSpeedUnit = measurementUnitsSet.windSpeedUnit.requestName.uppercase(),
+                    temperatureUnit = measurementUnitsSet.temperatureUnit.requestName.uppercase(),
+                    precipitationUnit = measurementUnitsSet.precipitationUnit.requestName.uppercase()
+                )
             ).also { retrofitResponse ->
                 if (!retrofitResponse.isSuccessful) {
-                    Log.d(Config.LOG.NETWORK_TAG, retrofitResponse.errorBody().toString())
+                    retrofitResponse.errorBody()?.let { Log.d(Config.LOG.NETWORK_TAG, it.string()) }
 
                     throw ResponseIsNotSuccessfulException(
                         message = retrofitResponse.message()
