@@ -37,7 +37,7 @@ class MainScreenViewModel(
         fetchWeather()
     }
 
-    public fun fetchWeather() {
+    fun fetchWeather() {
         viewModelScope.launch {
             isLoading.value = true
             try {

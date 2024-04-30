@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -124,6 +125,7 @@ fun TopHourlyWeather(
     weather: Weather,
     iconSize: Dp = 56.dp,
 ) = with(MaterialTheme.colorScheme) {
+    val degree = stringResource(weather.measurementUnitsSet.temperatureUnit.unitResId);
 
     LazyRow(
         modifier = modifier.fillMaxSize(),
@@ -131,9 +133,11 @@ fun TopHourlyWeather(
         contentPadding = PaddingValues(horizontal = 5.dp)
     ) {
         items(weather.hourlyWeather) { item ->
-            OutlinedCard(modifier = Modifier
-                .padding(horizontal = 5.dp)
-                .fillMaxHeight(fraction = 1f)) {
+            OutlinedCard(
+                modifier = Modifier
+                    .padding(horizontal = 5.dp)
+                    .fillMaxHeight(fraction = 1f)
+            ) {
                 Column(
                     verticalArrangement = Arrangement.SpaceEvenly,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -151,10 +155,13 @@ fun TopHourlyWeather(
                         imageVector = ImageVector.vectorResource(id = item.iconResId),
                         contentDescription = null,
                         modifier = Modifier.size(iconSize),
-                        colorFilter = ColorFilter.tint(blendMode = BlendMode.Modulate, color = Color.White)
+                        colorFilter = ColorFilter.tint(
+                            blendMode = BlendMode.Modulate,
+                            color = Color.White
+                        )
                     )
                     Text(
-                        text = "${item.temperature}°",
+                        text = "${item.temperature}${degree}",
                         style = MaterialTheme.typography.bodyLarge,
                         color = onSecondaryContainer
                     )
@@ -175,12 +182,86 @@ fun TopHourlyWeather(
     }
 }
 
+@Preview
+@Composable
+fun preview() {
+    val modifier: Modifier = Modifier
+    val iconSize: Dp = 48.dp
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()){
+
+        OutlinedCard(
+            modifier = Modifier
+                .padding(horizontal = 5.dp)
+                .height(220.dp)
+                .width(350.dp)
+        ) {
+            Row(
+                modifier = modifier,
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Image(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_sky_32),
+                        contentDescription = null,
+                        modifier = Modifier.size(iconSize),
+                        colorFilter = ColorFilter.tint(
+                            blendMode = BlendMode.Modulate,
+                            color = Color.White
+                        )
+                    )
+                    Text(
+                        text = stringResource(id = R.string.partly_cloudy),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.Blue,
+                        textAlign = TextAlign.Center,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(horizontal = 10.dp)
+                    )
+                }
+
+                Divider(
+                    modifier = Modifier
+                        .background(Color.Green)
+                        .rotate(45f)
+                        .padding(top = 40.dp, bottom = 50.dp, start = 2.dp, end = 2.dp)
+                        .height(130.dp)
+                        .width(3.dp)
+                    ,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+
+                )
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1.3f)
+                ) {
+                    Text(
+                        text = "10°F / 10°F",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = Color.Cyan,
+                        modifier = Modifier
+                            .padding(vertical = 50.dp)
+                    )
+                }
+            }
+        }
+    }
+}
 @Composable
 fun TopDailyWeather(
     modifier: Modifier = Modifier,
     iconSize: Dp = 48.dp,
     weather: Weather
 ) = with(MaterialTheme.colorScheme) {
+    val degree = stringResource(weather.measurementUnitsSet.temperatureUnit.unitResId);
 
     Row(
         modifier = modifier,
@@ -196,12 +277,6 @@ fun TopDailyWeather(
                 modifier = Modifier.size(iconSize),
                 colorFilter = ColorFilter.tint(blendMode = BlendMode.Modulate, color = Color.White)
             )
-//            Icon(
-//                painter = painterResource(id = weather.iconResId),
-//                contentDescription = null,
-//                modifier = Modifier.size(iconSize),
-//                tint = onPrimaryContainer
-//            )
             Text(
                 text = stringResource(id = weather.descriptionResId),
                 style = MaterialTheme.typography.bodyLarge,
@@ -214,19 +289,21 @@ fun TopDailyWeather(
 
         Divider(
             modifier = Modifier
+                .padding(2.dp)
                 .width(1.dp)
-                .fillMaxHeight(), color = MaterialTheme.colorScheme.onSecondaryContainer
+                .fillMaxHeight(),
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
         )
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
-                .weight(1f)
+                .weight(1.3f)
         ) {
             Text(
-                text = "${weather.temperatureMin}° / ${weather.temperatureMax}°",
-                style = MaterialTheme.typography.headlineMedium,
+                text = "${weather.temperatureMin}${degree} / ${weather.temperatureMax}${degree}",
+                style = MaterialTheme.typography.headlineSmall,
                 color = onSecondaryContainer
             )
         }
@@ -263,12 +340,13 @@ fun SunriseAndSunset(
 @Composable
 fun ApparentTemperature(modifier: Modifier = Modifier, weather: Weather) {
 
+    val degree = stringResource(weather.measurementUnitsSet.temperatureUnit.unitResId);
     TextRow(modifier = modifier) {
         Text(
             text = "${stringResource(R.string.apparent_temperature)}: ",
             textAlign = TextAlign.Center
         )
-        Text(text = "${weather.apparentTemperatureMin}° / ${weather.apparentTemperatureMax}°")
+        Text(text = "${weather.apparentTemperatureMin}${degree} / ${weather.apparentTemperatureMax}${degree}")
     }
 }
 
