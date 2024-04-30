@@ -13,6 +13,9 @@ import androidx.compose.material3.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -34,6 +37,7 @@ import com.loodmeet.weatherapp.ui.models.MainScreenTabItem
 import com.loodmeet.weatherapp.ui.veiw_models.MainScreenViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.style.TextAlign
 import com.loodmeet.weatherapp.core.models.Location
 import com.loodmeet.weatherapp.ui.models.Weather
 
@@ -42,14 +46,58 @@ import com.loodmeet.weatherapp.ui.models.Weather
 fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
 
     if (viewModel.getIsLoading().value) {
-        Init()
+        Loading()
+    } else if (viewModel.getIsError().value) {
+        Error(viewModel)
     } else {
         MainView(weatherList = viewModel.getWeatherData())
     }
 }
 
 @Composable
-fun Init() = with(MaterialTheme.colorScheme) {
+fun Error(viewModel: MainScreenViewModel = viewModel()): Unit = with(MaterialTheme.colorScheme) {
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState, modifier = Modifier.background(background)) },
+        backgroundColor = background
+    ) { padding ->
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            IconButton(
+                modifier = Modifier.padding(padding),
+                onClick = viewModel::fetchWeather) {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = null,
+                    tint = surfaceTint,
+                    modifier = Modifier.size(48.dp)
+                )
+            }
+        }
+    }
+
+    val context = LocalContext.current
+    scope.launch {
+        val result = snackbarHostState.showSnackbar(
+            message = context.getString(R.string.error_load),
+            withDismissAction = true,
+            duration = SnackbarDuration.Long
+        )
+        when (result) {
+            SnackbarResult.Dismissed -> {}
+            else -> {}
+        }
+    }
+
+}
+
+@Composable
+fun Loading() = with(MaterialTheme.colorScheme) {
     Row(
         modifier = Modifier
             .fillMaxSize()

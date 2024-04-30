@@ -64,5 +64,6 @@
     <string name="thunderstorm_with_hail">Гроза с градом</string>
     <string name="unknown" translatable="false">Unknown</string>
 
-
+    <string name="error_load">Не удалось загрузить данные</string>
+    <string name="retry">Попробовать снова</string>
 </resources>
