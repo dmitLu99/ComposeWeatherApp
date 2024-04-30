@@ -13,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.BlendMode
@@ -94,8 +95,10 @@ fun WeatherCard(modifier: Modifier = Modifier, weather: Weather) {
                 .fillMaxSize()
         ) {
             Image(
+                modifier = Modifier.blur(radius = 4.dp),
                 contentScale = ContentScale.Crop,
                 painter = painterResource(id = weather.backgroundId),
+//                painter = painterResource(id = R.drawable.sun),
                 contentDescription = null
             )
             Column(modifier = Modifier.fillMaxSize()) {
@@ -287,7 +290,6 @@ fun TopDailyWeather(
 ) = with(MaterialTheme.colorScheme) {
     val degree = stringResource(weather.measurementUnitsSet.temperatureUnit.unitResId);
 
-//    val foreground = Color(0xFF00344f)
     val foreground = colorResource(id = weather.foregroundColorId)
     Row(
         modifier = modifier,

@@ -174,7 +174,7 @@ enum class TranslatedWeatherCode {
         get() = when (backgroundId) {
             R.drawable.rain -> R.color.dark_image_foreground
             R.drawable.overcast -> R.color.light_image_foreground
-            R.drawable.sun -> R.color.light_image_foreground
+            R.drawable.sun -> R.color.dark_image_foreground
             R.drawable.snow -> R.color.light_image_foreground
             else -> R.color.light_image_foreground
         }
