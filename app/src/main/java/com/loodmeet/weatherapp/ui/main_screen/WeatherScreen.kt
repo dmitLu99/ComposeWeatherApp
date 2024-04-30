@@ -162,7 +162,8 @@ fun TopHourlyWeather(
             OutlinedCard(
                 modifier = Modifier
                     .padding(horizontal = 5.dp)
-                    .fillMaxHeight(fraction = 1f)
+                    .fillMaxHeight(fraction = 1f),
+                colors = CardDefaults.cardColors(containerColor = Color(0x60000000))
             ) {
                 Column(
                     verticalArrangement = Arrangement.SpaceEvenly,
