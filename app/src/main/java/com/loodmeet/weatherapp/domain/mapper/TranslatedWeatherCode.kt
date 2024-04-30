@@ -8,106 +8,127 @@ enum class TranslatedWeatherCode {
         override val stringResId = R.string.clear_sky
         override val dayImageResId: Int = R.drawable.ic_sun_32
         override val nightImageResId: Int = R.drawable.ic_moon_32
+        override val backgroundId: Int = R.drawable.sun
     },
     MAINLY_CLEAR {
         override val stringResId = R.string.mainly_clear
         override val dayImageResId: Int = R.drawable.ic_weather_2_32
         override val nightImageResId: Int = R.drawable.ic_weather_3_32
+        override val backgroundId: Int = R.drawable.sun
     },
     PARTLY_CLOUDY {
         override val stringResId = R.string.partly_cloudy
         override val dayImageResId: Int = R.drawable.ic_weather_2_32
         override val nightImageResId: Int = R.drawable.ic_weather_3_32
+        override val backgroundId: Int = R.drawable.overcast
     },
     OVERCAST {
         override val stringResId = R.string.overcast
         override val dayImageResId: Int = R.drawable.ic_sky_32
         override val nightImageResId: Int = R.drawable.ic_sky_32
+        override val backgroundId: Int = R.drawable.overcast
     },
     FOG {
         override val stringResId = R.string.fog
         override val dayImageResId: Int = R.drawable.ic_sky_32
         override val nightImageResId: Int = R.drawable.ic_sky_32
+        override val backgroundId: Int = R.drawable.overcast
     },
     DEPOSITING_RIME_FOG {
         override val stringResId = R.string.depositing_rime_fog
         override val dayImageResId: Int = R.drawable.ic_sky_32
         override val nightImageResId: Int = R.drawable.ic_sky_32
+        override val backgroundId: Int = R.drawable.overcast
     },
     DRIZZLE {
         override val stringResId = R.string.drizzle
         override val dayImageResId: Int = R.drawable.ic_weather_5_32
         override val nightImageResId: Int = R.drawable.ic_weather_6_32
+        override val backgroundId: Int = R.drawable.rain
     },
     SLIGHT_INTENSITY_RAIN {
         override val stringResId = R.string.slight_intensity_rain
         override val dayImageResId: Int = R.drawable.ic_weather_5_32
         override val nightImageResId: Int = R.drawable.ic_weather_6_32
+        override val backgroundId: Int = R.drawable.rain
     },
     MODERATE_INTENSITY_RAIN {
         override val stringResId = R.string.moderate_intensity_rain
         override val dayImageResId: Int = R.drawable.ic_weather_11_32
         override val nightImageResId: Int = R.drawable.ic_weather_12_32
+        override val backgroundId: Int = R.drawable.rain
     },
     HEAVY_INTENSITY_RAIN {
         override val stringResId = R.string.heavy_intensity_rain
         override val dayImageResId: Int = R.drawable.ic_weather_9_32
         override val nightImageResId: Int = R.drawable.ic_weather_7_32
+        override val backgroundId: Int = R.drawable.rain
     },
     LIGHT_INTENSITY_FREEZING_RAIN {
         override val stringResId = R.string.light_intensity_freezing_rain
         override val dayImageResId: Int = R.drawable.ic_weather_14_32
         override val nightImageResId: Int = R.drawable.ic_weather_15_32
+        override val backgroundId: Int = R.drawable.rain
     },
     HEAVY_INTENSITY_FREEZING_RAIN {
         override val stringResId = R.string.heavy_intensity_freezing_rain
         override val dayImageResId: Int = R.drawable.ic_weather_11_32
         override val nightImageResId: Int = R.drawable.ic_weather_12_32
+        override val backgroundId: Int = R.drawable.rain
     },
     SLIGHT_INTENSITY_SNOW {
         override val stringResId = R.string.slight_intensity_snow
         override val dayImageResId: Int = R.drawable.ic_snow_32
         override val nightImageResId: Int = R.drawable.ic_snow_32
+        override val backgroundId: Int = R.drawable.snow
     },
     MODERATE_INTENSITY_SNOW {
         override val stringResId = R.string.moderate_intensity_snow
         override val dayImageResId: Int = R.drawable.ic_snow_32
         override val nightImageResId: Int = R.drawable.ic_snow_32
+        override val backgroundId: Int = R.drawable.snow
     },
     HEAVY_INTENSITY_SNOW {
         override val stringResId = R.string.heavy_intensity_snow
         override val dayImageResId: Int = R.drawable.ic_snow_32
         override val nightImageResId: Int = R.drawable.ic_snow_32
+        override val backgroundId: Int = R.drawable.snow
     },
     SNOW_GRAINS {
         override val stringResId = R.string.snow_grains
         override val dayImageResId: Int = R.drawable.ic_weather_44_32
         override val nightImageResId: Int = R.drawable.ic_weather_45_32
+        override val backgroundId: Int = R.drawable.snow
     },
     RAIN_SHOWERS {
         override val stringResId = R.string.rain_showers
         override val dayImageResId: Int = R.drawable.ic_weather_32_32
         override val nightImageResId: Int = R.drawable.ic_weather_33_32
+        override val backgroundId: Int = R.drawable.rain
     },
     SNOW_SHOWERS {
         override val stringResId = R.string.snow_showers
         override val dayImageResId: Int = R.drawable.ic_weather_44_32
         override val nightImageResId: Int = R.drawable.ic_weather_45_32
+        override val backgroundId: Int = R.drawable.snow
     },
     SLIGHT_THUNDERSTORM {
         override val stringResId = R.string.slight_thunderstorm
         override val dayImageResId: Int = R.drawable.ic_weather_17_32
         override val nightImageResId: Int = R.drawable.ic_weather_18_32
+        override val backgroundId: Int = R.drawable.rain
     },
     THUNDERSTORM_WITH_HAIL {
         override val stringResId = R.string.thunderstorm_with_hail
         override val dayImageResId: Int = R.drawable.ic_weather_44_32
         override val nightImageResId: Int = R.drawable.ic_weather_45_32
+        override val backgroundId: Int = R.drawable.rain
     },
     UNKNOWN {
         override val stringResId = R.string.unknown
         override val dayImageResId: Int = R.drawable.ic_sun_32
         override val nightImageResId: Int = R.drawable.ic_moon_32
+        override val backgroundId: Int = R.drawable.sun
     };
 
     companion object {
@@ -148,4 +169,13 @@ enum class TranslatedWeatherCode {
     abstract val stringResId: Int
     abstract val dayImageResId: Int
     abstract val nightImageResId: Int
+    abstract val backgroundId: Int
+    val foregroundColorId: Int
+        get() = when (backgroundId) {
+            R.drawable.rain -> R.color.dark_image_foreground
+            R.drawable.overcast -> R.color.light_image_foreground
+            R.drawable.sun -> R.color.light_image_foreground
+            R.drawable.snow -> R.color.light_image_foreground
+            else -> R.color.light_image_foreground
+        }
 }

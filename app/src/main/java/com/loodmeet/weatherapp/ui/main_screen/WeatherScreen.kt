@@ -1,5 +1,6 @@
 package com.loodmeet.weatherapp.ui.main_screen
 
+import android.content.res.Resources.Theme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,6 +21,8 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.RootGroupName
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -86,36 +89,56 @@ fun WeatherCard(modifier: Modifier = Modifier, weather: Weather) {
             isDaily = !isDaily
         }
     ) {
-        Column {
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp, end = 8.dp)
-            ) {
-                if (isDaily) Icon(
-                    painter = painterResource(id = R.drawable.outline_info_24),
-                    contentDescription = null
-                )
-            }
+        Box(
+            Modifier
+                .fillMaxSize()
+        ) {
+            Image(
+                contentScale = ContentScale.Crop,
+                painter = painterResource(id = weather.backgroundId),
+                contentDescription = null
+            )
+            Column(modifier = Modifier.fillMaxSize()) {
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, end = 8.dp)
+                ) {
+                    if (isDaily) IconButton(
+                        modifier = Modifier.height(24.dp),
+                        onClick = { isDaily = !isDaily }) {
+                        Image(
+                            painter = painterResource(id = R.drawable.outline_info_24),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(
+                                blendMode = BlendMode.Modulate, color = colorResource(
+                                    id = weather.foregroundColorId
+                                )
+                            )
+                        )
+                    }
+                }
 
-            Row {
-                val weatherModifier = Modifier
-                    .padding(bottom = 30.dp, top = 10.dp)
-                    .fillMaxWidth()
-                if (isDaily) {
-                    TopDailyWeather(
-                        weather = weather,
-                        modifier = weatherModifier
-                    )
-                } else {
-                    TopHourlyWeather(
-                        weather = weather,
-                        modifier = weatherModifier
-                    )
+                Row {
+                    val weatherModifier = Modifier
+                        .padding(bottom = 30.dp, top = 10.dp)
+                        .fillMaxWidth()
+                    if (isDaily) {
+                        TopDailyWeather(
+                            weather = weather,
+                            modifier = weatherModifier
+                        )
+                    } else {
+                        TopHourlyWeather(
+                            weather = weather,
+                            modifier = weatherModifier
+                        )
+                    }
                 }
             }
         }
+
     }
 }
 
@@ -190,7 +213,8 @@ fun preview() {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()){
+        modifier = Modifier.fillMaxSize()
+    ) {
 
         OutlinedCard(
             modifier = Modifier
@@ -230,8 +254,7 @@ fun preview() {
                         .rotate(45f)
                         .padding(top = 40.dp, bottom = 50.dp, start = 2.dp, end = 2.dp)
                         .height(130.dp)
-                        .width(3.dp)
-                    ,
+                        .width(3.dp),
                     color = MaterialTheme.colorScheme.onSecondaryContainer
 
                 )
@@ -255,6 +278,7 @@ fun preview() {
         }
     }
 }
+
 @Composable
 fun TopDailyWeather(
     modifier: Modifier = Modifier,
@@ -263,6 +287,8 @@ fun TopDailyWeather(
 ) = with(MaterialTheme.colorScheme) {
     val degree = stringResource(weather.measurementUnitsSet.temperatureUnit.unitResId);
 
+//    val foreground = Color(0xFF00344f)
+    val foreground = colorResource(id = weather.foregroundColorId)
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
@@ -275,12 +301,12 @@ fun TopDailyWeather(
                 imageVector = ImageVector.vectorResource(id = weather.iconResId),
                 contentDescription = null,
                 modifier = Modifier.size(iconSize),
-                colorFilter = ColorFilter.tint(blendMode = BlendMode.Modulate, color = Color.White)
+                colorFilter = ColorFilter.tint(blendMode = BlendMode.Modulate, color = foreground)
             )
             Text(
                 text = stringResource(id = weather.descriptionResId),
                 style = MaterialTheme.typography.bodyLarge,
-                color = onSecondaryContainer,
+                color = foreground,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(horizontal = 10.dp)
@@ -292,7 +318,7 @@ fun TopDailyWeather(
                 .padding(2.dp)
                 .width(1.dp)
                 .fillMaxHeight(),
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            color = foreground,
         )
 
         Column(
@@ -304,7 +330,7 @@ fun TopDailyWeather(
             Text(
                 text = "${weather.temperatureMin}${degree} / ${weather.temperatureMax}${degree}",
                 style = MaterialTheme.typography.headlineSmall,
-                color = onSecondaryContainer
+                color = foreground
             )
         }
     }

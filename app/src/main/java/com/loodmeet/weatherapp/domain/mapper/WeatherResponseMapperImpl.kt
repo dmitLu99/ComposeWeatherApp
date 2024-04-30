@@ -35,6 +35,7 @@ class WeatherResponseMapperImpl @Inject constructor() : WeatherResponseMapper {
         withContext(Dispatchers.Default) {
             return@withContext List(size = 7) { dailyIndex ->
                 val daily = response.daily[dailyIndex]
+                val translatedDailyWeather = TranslatedWeatherCode.fromWeatherCode(daily.weatherCode)
                 Weather(
                     date = dailyFormatter.format(LocalDate.parse(daily.date, dailyResponseFormatter)),
                     descriptionResId = TranslatedWeatherCode.fromWeatherCode(daily.weatherCode).stringResId,
@@ -49,16 +50,18 @@ class WeatherResponseMapperImpl @Inject constructor() : WeatherResponseMapper {
                     precipitationSum = daily.precipitationSum,
                     hourlyWeather = List(size = 8) { hourlyIndex ->
                         val hourly = daily.hourlyWeather[hourlyIndex]
-                        val translatedWeather = TranslatedWeatherCode.fromWeatherCode(hourly.weatherCode)
+                        val translatedHourlyWeather = TranslatedWeatherCode.fromWeatherCode(hourly.weatherCode)
                         HourlyWeather(
                             time = hourlyFormatter.format(LocalDateTime.parse(hourly.time, hourlyResponseFormatter)),
-                            descriptionResId = translatedWeather.stringResId,
-                            iconResId = if (hourly.isDay) translatedWeather.dayImageResId else translatedWeather.nightImageResId,
+                            descriptionResId = translatedHourlyWeather.stringResId,
+                            iconResId = if (hourly.isDay) translatedHourlyWeather.dayImageResId else translatedHourlyWeather.nightImageResId,
                             temperature = Temperature(hourly.temperature).getValueAsString()
                         )
                     },
                     measurementUnitsSet = measurementUnitsSet,
-                    dayLengthIndicator = daily.dayLengthIndicator
+                    dayLengthIndicator = daily.dayLengthIndicator,
+                    backgroundId = translatedDailyWeather.backgroundId,
+                    foregroundColorId = translatedDailyWeather.foregroundColorId
                 )
             }
         }

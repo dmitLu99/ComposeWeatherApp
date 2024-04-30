@@ -49,7 +49,9 @@ class FetchWeatherUseCase @Inject constructor(
                 )
             },
             measurementUnitsSet = MeasurementUnitsSet(),
-            dayLengthIndicator = 0.7f
+            dayLengthIndicator = 0.7f,
+            backgroundId = R.drawable.overcast,
+            foregroundColorId = R.color.light_image_foreground
         )
     }
 

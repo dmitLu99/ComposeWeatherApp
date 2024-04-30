@@ -17,7 +17,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
-private val DarkColorScheme = darkColorScheme(
+public val DarkColorScheme = darkColorScheme(
     primary = Color(0xFF8ecdff),
     secondary = Color(0xFFb6c9d8),
     tertiary = Color(0xFFcbc1e9),

@@ -16,5 +16,7 @@ data class Weather(
     val precipitationSum: Int,
     val hourlyWeather: List<HourlyWeather>,
     val dayLengthIndicator: Float,
-    val measurementUnitsSet: MeasurementUnitsSet
+    val measurementUnitsSet: MeasurementUnitsSet,
+    val backgroundId: Int,
+    val foregroundColorId: Int
 )
