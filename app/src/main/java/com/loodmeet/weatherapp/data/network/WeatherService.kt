@@ -11,7 +11,7 @@ const val DEFAULT_DAILY_GET = "weathercode,temperature_2m_max,temperature_2m_min
 
 interface WeatherService {
 
-    @GET("forecast") suspend fun execute(
+    @GET("forecast") suspend fun executeOriginal(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
         @Query("hourly", encoded = true) hourly: String = DEFAULT_HOURLY_GET,
@@ -19,6 +19,14 @@ interface WeatherService {
         @Query("windspeed_unit", encoded = true) windSpeedUnit: String,
         @Query("temperature_unit", encoded = true) temperatureUnit: String,
         @Query("precipitation_unit", encoded = true) precipitationUnit: String,
+        @Query("timezone", encoded = true) timezone: String = "auto"
+    ): Response<WeatherResponse>
+
+    @GET("forecast") suspend fun execute(
+        @Query("location") location: String,
+        @Query("windSpeedUnit", encoded = true) windSpeedUnit: String,
+        @Query("temperatureUnit", encoded = true) temperatureUnit: String,
+        @Query("precipitationUnit", encoded = true) precipitationUnit: String,
         @Query("timezone", encoded = true) timezone: String = "auto"
     ): Response<WeatherResponse>
 }

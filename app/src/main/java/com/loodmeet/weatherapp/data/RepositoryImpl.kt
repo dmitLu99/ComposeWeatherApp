@@ -3,6 +3,7 @@ package com.loodmeet.weatherapp.data
 import android.app.Application
 import android.content.Context
 import android.util.Log
+import androidx.compose.ui.text.toUpperCase
 import com.loodmeet.weatherapp.core.exceptions.RequestExecuteException
 import com.loodmeet.weatherapp.core.exceptions.ResponseIsNotSuccessfulException
 import com.loodmeet.weatherapp.core.models.Location
@@ -14,6 +15,7 @@ import com.loodmeet.weatherapp.data.network.WeatherService
 import com.loodmeet.weatherapp.di.AppScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.Locale
 import javax.inject.Inject
 
 const val TEMPERATURE_KEY = "temperature"
@@ -80,7 +82,7 @@ class RepositoryImpl @Inject constructor(
     override suspend fun fetchWeather(): WeatherResponse = withContext(Dispatchers.IO) {
         return@withContext try {
             service.execute(
-                latitude = location.latitude, longitude = location.longitude,
+                location = location.javaClass.name.uppercase(Locale.ROOT),
                 windSpeedUnit = measurementUnitsSet.windSpeedUnit.requestName,
                 temperatureUnit = measurementUnitsSet.temperatureUnit.requestName,
                 precipitationUnit = measurementUnitsSet.precipitationUnit.requestName

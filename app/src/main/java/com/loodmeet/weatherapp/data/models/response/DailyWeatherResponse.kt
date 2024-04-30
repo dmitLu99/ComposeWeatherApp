@@ -11,5 +11,6 @@ data class DailyWeatherResponse(
     val windSpeed: Double,
     val precipitationSum: Int,
     val hourlyWeather: List<HourlyWeatherResponse>,
-    val dayLengthIndicator: Float
+    val dayLengthIndicator: Float,
+    val weatherCode: Int
 )

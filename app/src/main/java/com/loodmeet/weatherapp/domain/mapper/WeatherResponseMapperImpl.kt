@@ -33,59 +33,32 @@ class WeatherResponseMapperImpl @Inject constructor() : WeatherResponseMapper {
         location: Location
     ): List<Weather> =
         withContext(Dispatchers.Default) {
-            val sunriseTime =
-                LocalDateTime.parse(response.daily.sunrise[0], hourlyResponseFormatter)
-            val sunsetTime = LocalDateTime.parse(response.daily.sunset[0], hourlyResponseFormatter)
-
-            var offset = LocalDateTime.now().hour
             return@withContext List(size = 7) { dailyIndex ->
-                if (dailyIndex != 0) offset = 0
-
+                val daily = response.daily[dailyIndex]
                 Weather(
-                    date = dailyFormatter.format(
-                        LocalDate.parse(
-                            response.daily.date[dailyIndex],
-                            dailyResponseFormatter
-                        )
-                    ),
-                    descriptionResId = TranslatedWeatherCode.fromWeatherCode(response.daily.weatherCode[dailyIndex]).stringResId,
-                    iconResId = TranslatedWeatherCode.fromWeatherCode(response.daily.weatherCode[dailyIndex]).dayImageResId,
-                    temperatureMax = Temperature(response.daily.temperatureMax[dailyIndex]).getValueAsString(),
-                    temperatureMin = Temperature(response.daily.temperatureMin[dailyIndex]).getValueAsString(),
-                    sunrise = hourlyFormatter.format(
-                        LocalDateTime.parse(
-                            response.daily.sunrise[dailyIndex],
-                            hourlyResponseFormatter
-                        )
-                    ),
-                    sunset = hourlyFormatter.format(
-                        LocalDateTime.parse(
-                            response.daily.sunset[dailyIndex],
-                            hourlyResponseFormatter
-                        )
-                    ),
-                    apparentTemperatureMin = Temperature(response.daily.apparentTemperatureMin[dailyIndex]).getValueAsString(),
-                    apparentTemperatureMax = Temperature(response.daily.apparentTemperatureMax[dailyIndex]).getValueAsString(),
-                    windSpeed = response.daily.windSpeed[dailyIndex],
-                    precipitationSum = response.daily.precipitationSum[dailyIndex].toInt(),
-                    hourlyWeather = List(size = 24 - offset) { hourlyIndex ->
-                        val translatedIndex = dailyIndex * 24 + hourlyIndex + offset
-                        val hourlyLocalDateTime = LocalDateTime.parse(
-                            response.hourly.time[translatedIndex],
-                            hourlyResponseFormatter
-                        )
-                        val isDay = hourlyLocalDateTime.hour in 4..22
-                        val translatedWeather =
-                            TranslatedWeatherCode.fromWeatherCode(response.hourly.weatherCode[translatedIndex])
+                    date = dailyFormatter.format(LocalDate.parse(daily.date, dailyResponseFormatter)),
+                    descriptionResId = TranslatedWeatherCode.fromWeatherCode(daily.weatherCode).stringResId,
+                    iconResId = TranslatedWeatherCode.fromWeatherCode(daily.weatherCode).dayImageResId,
+                    temperatureMax = Temperature(daily.temperatureMax).getValueAsString(),
+                    temperatureMin = Temperature(daily.temperatureMin).getValueAsString(),
+                    sunrise = hourlyFormatter.format(LocalDateTime.parse(daily.sunrise, hourlyResponseFormatter)),
+                    sunset = hourlyFormatter.format(LocalDateTime.parse(daily.sunset, hourlyResponseFormatter)),
+                    apparentTemperatureMin = Temperature(daily.apparentTemperatureMin).getValueAsString(),
+                    apparentTemperatureMax = Temperature(daily.apparentTemperatureMax).getValueAsString(),
+                    windSpeed = daily.windSpeed,
+                    precipitationSum = daily.precipitationSum,
+                    hourlyWeather = List(size = 8) { hourlyIndex ->
+                        val hourly = daily.hourlyWeather[hourlyIndex]
+                        val translatedWeather = TranslatedWeatherCode.fromWeatherCode(hourly.weatherCode)
                         HourlyWeather(
-                            time = hourlyFormatter.format(hourlyLocalDateTime),
+                            time = hourlyFormatter.format(LocalDateTime.parse(hourly.time, hourlyResponseFormatter)),
                             descriptionResId = translatedWeather.stringResId,
-                            iconResId = if (isDay) translatedWeather.dayImageResId else translatedWeather.nightImageResId,
-                            temperature = Temperature(response.hourly.temperature2m[translatedIndex]).getValueAsString()
+                            iconResId = if (hourly.isDay) translatedWeather.dayImageResId else translatedWeather.nightImageResId,
+                            temperature = Temperature(hourly.temperature).getValueAsString()
                         )
                     },
                     measurementUnitsSet = measurementUnitsSet,
-                    dayLengthIndicator = (sunsetTime.hour + sunsetTime.minute / 60 - sunriseTime.hour - sunriseTime.minute / 60) / location.maxDayLengthInHours.toFloat()
+                    dayLengthIndicator = daily.dayLengthIndicator
                 )
             }
         }

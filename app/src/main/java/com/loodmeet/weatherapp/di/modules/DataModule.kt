@@ -9,7 +9,7 @@ import dagger.Provides
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-private const val BASE_URL = "https://api.open-meteo.com/v1/"
+private const val BASE_URL = "http://localhost:8080/"
 
 @Module
 class DataModule {
