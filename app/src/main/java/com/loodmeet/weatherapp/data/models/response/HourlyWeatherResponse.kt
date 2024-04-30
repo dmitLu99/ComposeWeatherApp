@@ -4,10 +4,8 @@ import com.google.gson.annotations.SerializedName
 import java.util.*
 
 data class HourlyWeatherResponse(
-    @SerializedName("weathercode")
-    val weatherCode: List<Int>,
-    @SerializedName("temperature_2m")
-    val temperature2m: List<Double>,
-    @SerializedName("time")
-    val time: List<String>
+    val weatherCode: Int,
+    val temperature: Double,
+    val time: String,
+    val isDay: Boolean
 )
