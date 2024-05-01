@@ -5,9 +5,12 @@ import android.content.Context
 import android.util.Log
 import com.loodmeet.weatherapp.core.exceptions.RequestExecuteException
 import com.loodmeet.weatherapp.core.exceptions.ResponseIsNotSuccessfulException
+import com.loodmeet.weatherapp.core.models.Language
 import com.loodmeet.weatherapp.core.models.Location
 import com.loodmeet.weatherapp.core.models.MeasurementUnit
 import com.loodmeet.weatherapp.core.models.MeasurementUnitsSet
+import com.loodmeet.weatherapp.core.models.Settings
+import com.loodmeet.weatherapp.core.models.Theme
 import com.loodmeet.weatherapp.core.utils.Config
 import com.loodmeet.weatherapp.data.models.request.WeatherRequest
 import com.loodmeet.weatherapp.data.models.response.WeatherResponse
@@ -24,6 +27,8 @@ const val TEMPERATURE_KEY = "temperature"
 const val WIND_SPEED_KEY = "wind_speed"
 const val PRECIPITATION_KEY = "precipitation"
 const val LOCATION_KEY = "location"
+const val THEME_KEY = "theme"
+const val LANGUAGE_KEY = "language"
 const val PREFS_NAME = "com.loodmeet.weatherapp"
 
 @AppScope
@@ -33,63 +38,26 @@ class RepositoryImpl @Inject constructor(
     application: Application
 ) : Repository {
 
-    private var location: Location = Location.Moscow
-    private var measurementUnitsSet: MeasurementUnitsSet = MeasurementUnitsSet()
+    private var settings: Settings = Settings(
+        measurementUnits = MeasurementUnitsSet(),
+        location = Location.Moscow,
+        language = Language.English,
+        theme = Theme.System
+    )
+
+    //    private var measurementUnitsSet: MeasurementUnitsSet = MeasurementUnitsSet()
     private var prefs =
         application.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    override suspend fun fetchLocation(): Location = withContext(Dispatchers.IO) {
-        location =
-            Location.getList().stream().filter { it.cityResId == prefs.getInt(LOCATION_KEY, -1) }
-                .findFirst().orElse(location)
-        return@withContext location
-    }
-
-    override suspend fun saveLocation(location: Location) = withContext(Dispatchers.IO) {
-        prefs.edit().putInt(LOCATION_KEY, location.cityResId).apply()
-        this@RepositoryImpl.location = location
-    }
-
-    override suspend fun fetchMeasurementUnitsSet(): MeasurementUnitsSet =
-        withContext(Dispatchers.IO) {
-            measurementUnitsSet = MeasurementUnitsSet(
-                temperatureUnit = MeasurementUnit.TemperatureUnit.getList().stream().filter {
-                    it.unitResId == prefs.getInt(
-                        TEMPERATURE_KEY, -1
-                    )
-                }.findFirst().orElse(measurementUnitsSet.temperatureUnit),
-                windSpeedUnit = MeasurementUnit.WindUnitSpeedUnit.getList().stream().filter {
-                    it.unitResId == prefs.getInt(
-                        WIND_SPEED_KEY, -1
-                    )
-                }.findFirst().orElse(measurementUnitsSet.windSpeedUnit),
-                precipitationUnit = MeasurementUnit.PrecipitationUnit.getList().stream().filter {
-                    it.unitResId == prefs.getInt(
-                        PRECIPITATION_KEY, -1
-                    )
-                }.findFirst().orElse(measurementUnitsSet.precipitationUnit)
-            )
-            return@withContext measurementUnitsSet
-        }
-
-    override suspend fun saveMeasurementUnitsSet(measurementUnitsSet: MeasurementUnitsSet) =
-        withContext(Dispatchers.IO) {
-            prefs.edit()
-                .putInt(TEMPERATURE_KEY, measurementUnitsSet.temperatureUnit.unitResId)
-                .putInt(WIND_SPEED_KEY, measurementUnitsSet.windSpeedUnit.unitResId)
-                .putInt(PRECIPITATION_KEY, measurementUnitsSet.precipitationUnit.unitResId)
-                .apply()
-            this@RepositoryImpl.measurementUnitsSet = measurementUnitsSet
-        }
 
     override suspend fun fetchWeather(): WeatherResponse = withContext(Dispatchers.IO) {
         return@withContext try {
             service.execute(
                 WeatherRequest(
-                    location = location.javaClass.simpleName.uppercase(Locale.ROOT),
-                    windSpeedUnit = measurementUnitsSet.windSpeedUnit.requestName.uppercase(),
-                    temperatureUnit = measurementUnitsSet.temperatureUnit.requestName.uppercase(),
-                    precipitationUnit = measurementUnitsSet.precipitationUnit.requestName.uppercase()
+                    location = settings.location.javaClass.simpleName.uppercase(Locale.ROOT),
+                    windSpeedUnit = settings.measurementUnits.windSpeedUnit.requestName.uppercase(),
+                    temperatureUnit = settings.measurementUnits.temperatureUnit.requestName.uppercase(),
+                    precipitationUnit = settings.measurementUnits.precipitationUnit.requestName.uppercase()
                 )
             ).also { retrofitResponse ->
                 if (!retrofitResponse.isSuccessful) {
@@ -105,24 +73,80 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun fetchWeatherFromOpenMeteo(): OpenMeteoWeatherResponse = withContext(Dispatchers.IO) {
-        return@withContext try {
-            openMeteoService.execute(
-                latitude = location.latitude, longitude = location.longitude,
-                windSpeedUnit = measurementUnitsSet.windSpeedUnit.requestName,
-                temperatureUnit = measurementUnitsSet.temperatureUnit.requestName,
-                precipitationUnit = measurementUnitsSet.precipitationUnit.requestName
-            ).also { retrofitResponse ->
-                if (!retrofitResponse.isSuccessful) {
-                    retrofitResponse.errorBody()?.let { Log.d(Config.LOG.NETWORK_TAG, it.string()) }
+    override suspend fun fetchWeatherFromOpenMeteo(): OpenMeteoWeatherResponse =
+        withContext(Dispatchers.IO) {
+            return@withContext try {
+                openMeteoService.execute(
+                    latitude = settings.location.latitude, longitude = settings.location.longitude,
+                    windSpeedUnit = settings.measurementUnits.windSpeedUnit.requestName,
+                    temperatureUnit = settings.measurementUnits.temperatureUnit.requestName,
+                    precipitationUnit = settings.measurementUnits.precipitationUnit.requestName
+                ).also { retrofitResponse ->
+                    if (!retrofitResponse.isSuccessful) {
+                        retrofitResponse.errorBody()
+                            ?.let { Log.d(Config.LOG.NETWORK_TAG, it.string()) }
 
-                    throw ResponseIsNotSuccessfulException(
-                        message = retrofitResponse.message()
-                    )
-                }
-            }.body()!!
-        } catch (e: Exception) {
-            throw RequestExecuteException(cause = e, message = "Request error")
+                        throw ResponseIsNotSuccessfulException(
+                            message = retrofitResponse.message()
+                        )
+                    }
+                }.body()!!
+            } catch (e: Exception) {
+                throw RequestExecuteException(cause = e, message = "Request error")
+            }
         }
+
+    override fun fetchSettings(): Settings {
+
+        val locationId = prefs.getInt(LOCATION_KEY, -1)
+        val themeId = prefs.getInt(THEME_KEY, -1)
+        val languageId = prefs.getInt(LANGUAGE_KEY, -1)
+
+        val tempId = prefs.getInt(TEMPERATURE_KEY, -1)
+        val windSpeedId = prefs.getInt(WIND_SPEED_KEY, -1)
+        val precipitationId = prefs.getInt(PRECIPITATION_KEY, -1)
+
+        val location = Location.getList().stream()
+            .filter { it.cityResId == locationId }
+            .findFirst().orElse(settings.location)
+        val theme = Theme.getList().stream()
+            .filter { it.nameResId == themeId }
+            .findFirst().orElse(settings.theme)
+        val language = Language.getList().stream()
+            .filter { it.nameResId == languageId }
+            .findFirst().orElse(settings.language)
+
+        val units = MeasurementUnitsSet(
+            temperatureUnit = MeasurementUnit.TemperatureUnit.getList().stream().filter {
+                it.unitResId == tempId
+            }.findFirst().orElse(settings.measurementUnits.temperatureUnit),
+            windSpeedUnit = MeasurementUnit.WindUnitSpeedUnit.getList().stream().filter {
+                it.unitResId == windSpeedId
+            }.findFirst().orElse(settings.measurementUnits.windSpeedUnit),
+            precipitationUnit = MeasurementUnit.PrecipitationUnit.getList().stream().filter {
+                it.unitResId == precipitationId
+            }.findFirst().orElse(settings.measurementUnits.precipitationUnit)
+        )
+
+        settings.location = location
+        settings.theme = theme
+        settings.language = language
+        settings.measurementUnits = units
+
+        return settings;
+    }
+
+    override suspend fun saveSettings(settings: Settings) = withContext(Dispatchers.IO) {
+        prefs.edit().putInt(LOCATION_KEY, settings.location.cityResId).apply()
+        prefs.edit().putInt(THEME_KEY, settings.theme.nameResId).apply()
+        prefs.edit().putInt(LANGUAGE_KEY, settings.language.nameResId).apply()
+
+        prefs.edit()
+            .putInt(TEMPERATURE_KEY, settings.measurementUnits.temperatureUnit.unitResId)
+            .putInt(WIND_SPEED_KEY, settings.measurementUnits.windSpeedUnit.unitResId)
+            .putInt(PRECIPITATION_KEY, settings.measurementUnits.precipitationUnit.unitResId)
+            .apply()
+
+        this@RepositoryImpl.settings = settings
     }
 }

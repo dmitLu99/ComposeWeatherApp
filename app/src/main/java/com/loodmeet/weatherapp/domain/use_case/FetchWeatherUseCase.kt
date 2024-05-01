@@ -25,8 +25,7 @@ class FetchWeatherUseCase @Inject constructor(
 
         return@withContext responseMapper.map(
             repository.fetchWeather(),
-            repository.fetchMeasurementUnitsSet(),
-            repository.fetchLocation()
+            repository.fetchSettings()
         )
     }
 
@@ -34,8 +33,7 @@ class FetchWeatherUseCase @Inject constructor(
 
         return@withContext openMeteoResponseMapper.map(
             repository.fetchWeatherFromOpenMeteo(),
-            repository.fetchMeasurementUnitsSet(),
-            repository.fetchLocation()
+            repository.fetchSettings()
         )
     }
 

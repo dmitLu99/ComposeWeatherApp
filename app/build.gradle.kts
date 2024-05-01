@@ -72,6 +72,10 @@ dependencies {
     implementation("com.google.accompanist:accompanist-pager:0.29.0-alpha")
     implementation("com.google.accompanist:accompanist-pager-indicators:0.29.0-alpha")
 
+    val appcompatVersion = "1.6.1"
+
+    implementation("androidx.appcompat:appcompat:$appcompatVersion")
+
     val composeVersion  = "1.2.1"
 
     // icons

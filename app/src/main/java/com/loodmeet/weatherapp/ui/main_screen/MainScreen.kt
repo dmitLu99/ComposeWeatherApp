@@ -1,5 +1,9 @@
 package com.loodmeet.weatherapp.ui.main_screen
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.res.Configuration
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -23,7 +27,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dmitLugg.weatherapp.R
 import com.google.accompanist.pager.*
@@ -37,15 +40,19 @@ import com.loodmeet.weatherapp.ui.models.MainScreenTabItem
 import com.loodmeet.weatherapp.ui.veiw_models.MainScreenViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewModelScope
+import com.loodmeet.weatherapp.core.models.Language
 import com.loodmeet.weatherapp.core.models.Location
+import com.loodmeet.weatherapp.core.models.Settings
+import com.loodmeet.weatherapp.core.models.Theme
 import com.loodmeet.weatherapp.ui.models.Weather
+import java.util.Locale
 
-@Preview
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun MainScreen(viewModel: MainScreenViewModel = viewModel()): Unit =
+fun MainScreen(settings: Settings, viewModel: MainScreenViewModel = viewModel()): Unit =
     with(MaterialTheme.colorScheme) {
+        setLocale(settings.language, LocalConfiguration.current, LocalContext.current)
         val snackbarHostState = remember { SnackbarHostState() }
         Scaffold(
             snackbarHost = {
@@ -66,14 +73,44 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()): Unit =
                     snackbarHostState = snackbarHostState
                 )
             } else {
+                if (viewModel.showNotificationFromOpenMeteo().value) {
+                    val context = LocalContext.current
+
+                    viewModel.viewModelScope.launch {
+                        val result = snackbarHostState.showSnackbar(
+                            message = context.getString(R.string.value_from_open_meteo),
+                            withDismissAction = true,
+                            duration = SnackbarDuration.Short
+                        )
+                        when (result) {
+                            SnackbarResult.Dismissed -> {}
+                            else -> {}
+                        }
+                    }
+                    viewModel.showNotificationFromOpenMeteo().value = false
+                }
+
                 MainView(
                     modifier = Modifier.padding(padding),
                     weatherList = viewModel.getWeatherData(),
-                    snackbarHostState = snackbarHostState
+                    viewModel = viewModel,
+                    settings = settings
                 )
             }
         }
     }
+
+fun setLocale(language: Language, localConfig: Configuration, context: Context) {
+    val locale = Locale(language.getTag())
+    Locale.setDefault(locale)
+    localConfig.setLocale(locale)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+        localConfig.setLocale(locale)
+    else
+        localConfig.locale = locale
+    var resources = context.resources
+    resources.updateConfiguration(localConfig, resources.displayMetrics)
+}
 
 @Composable
 fun Error(
@@ -134,24 +171,10 @@ fun MainView(
     modifier: Modifier = Modifier,
     viewModel: MainScreenViewModel = viewModel(),
     weatherList: List<Weather>,
-    snackbarHostState: SnackbarHostState,
+    settings: Settings,
 ) =
     with(MaterialTheme.colorScheme) {
-        if (viewModel.getIsFromOpenMeteo().value) {
-            val context = LocalContext.current
 
-            viewModel.viewModelScope.launch {
-                val result = snackbarHostState.showSnackbar(
-                    message = context.getString(R.string.value_from_open_meteo),
-                    withDismissAction = true,
-                    duration = SnackbarDuration.Long
-                )
-                when (result) {
-                    SnackbarResult.Dismissed -> {}
-                    else -> {}
-                }
-            }
-        }
         val tabs = listOf(
             MainScreenTabItem(weatherList[0].date) { WeatherScreen(weatherList[0]) },
             MainScreenTabItem(weatherList[1].date) { WeatherScreen(weatherList[1]) },
@@ -192,20 +215,46 @@ fun MainView(
                 launch { scaffoldState.snackbarHostState.showSnackbar(savedText, closeText) }
             }
         }
-        var selectedLocation = viewModel.getLocation()
 
-        val selectedUnitsSet = viewModel.getMeasurementUnitsSet()
+        var selectedLocation = settings.location
+        var selectedTheme = settings.theme
+        var selectedLanguage = settings.language
+
+        val selectedUnitsSet = settings.measurementUnits
         var selectedTemperature = selectedUnitsSet.temperatureUnit
         var selectedWindSpeed = selectedUnitsSet.windSpeedUnit
         var selectedPrecipitation = selectedUnitsSet.precipitationUnit
 
+        val config = LocalConfiguration.current
+        val context = LocalContext.current
+        val languageItems = mapToBottomSheetListItem(
+            items = Language.getList(),
+            onClick = topNamedItemsOnClick,
+            isClicked = { item -> item == selectedLanguage },
+            onSelect = { item ->
+                selectedLanguage = item
+                viewModel.changeSettings(language = item)
+                setLocale(language = item, context =context, localConfig = config)
+            }
+        )
+
+        val themeItems = mapToBottomSheetListItem(
+            items = Theme.getList(),
+            onClick = topNamedItemsOnClick,
+            isClicked = { item -> item == selectedTheme },
+            onSelect = { item ->
+                selectedTheme = item
+                viewModel.changeSettings(theme = item)
+            }
+        )
+
         val locationItems = mapToBottomSheetListItem(
-            items = viewModel.fetchLocationList(),
+            items = Location.getList(),
             onClick = topNamedItemsOnClick,
             isClicked = { item -> item == selectedLocation },
             onSelect = { item ->
                 selectedLocation = item
-                viewModel.changeLocation(item)
+                viewModel.changeSettings(location = item)
             }
         )
 
@@ -218,10 +267,10 @@ fun MainView(
             isClicked = { item -> item == selectedTemperature },
             onSelect = { item ->
                 selectedTemperature = item
-                viewModel.changeMeasurementUnitsSet(
-                    selectedUnitsSet.apply {
-                        temperatureUnit = item
-                    })
+                viewModel.changeSettings(measurementUnitsSet =
+                selectedUnitsSet.apply {
+                    temperatureUnit = item
+                })
             }
         )
 
@@ -236,10 +285,10 @@ fun MainView(
             isClicked = { item -> item == selectedWindSpeed },
             onSelect = { item ->
                 selectedWindSpeed = item
-                viewModel.changeMeasurementUnitsSet(
-                    selectedUnitsSet.apply {
-                        windSpeedUnit = item
-                    })
+                viewModel.changeSettings(measurementUnitsSet =
+                selectedUnitsSet.apply {
+                    windSpeedUnit = item
+                })
             }
         )
 
@@ -252,16 +301,22 @@ fun MainView(
             isClicked = { item -> item == selectedPrecipitation },
             onSelect = { item ->
                 selectedPrecipitation = item
-                viewModel.changeMeasurementUnitsSet(
-                    selectedUnitsSet.apply {
-                        precipitationUnit = item
-                    })
+                viewModel.changeSettings(measurementUnitsSet =
+                selectedUnitsSet.apply {
+                    precipitationUnit = item
+                })
             }
         )
 
         val topItems = listOf(
+            BottomSheetListItem.ImagedBottomSheetListItem.LanguageItem {
+                bottomSheetListItemOnClick(languageItems)
+            },
             BottomSheetListItem.ImagedBottomSheetListItem.LocationItem {
                 bottomSheetListItemOnClick(locationItems)
+            },
+            BottomSheetListItem.ImagedBottomSheetListItem.ThemeItem {
+                bottomSheetListItemOnClick(themeItems)
             }
         )
 

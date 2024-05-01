@@ -39,6 +39,18 @@ open class BottomSheetListItem(open val nameResId: Int, open val onClick: () -> 
             override val onClick: () -> Unit
         ) : ImagedBottomSheetListItem(nameResId, imageResId, onClick)
 
+        data class ThemeItem(
+            override val nameResId: Int = R.string.theme,
+            override val imageResId: Int = R.drawable.theme,
+            override val onClick: () -> Unit
+        ) : ImagedBottomSheetListItem(nameResId, imageResId, onClick)
+
+        data class LanguageItem(
+            override val nameResId: Int = R.string.language,
+            override val imageResId: Int = R.drawable.language,
+            override val onClick: () -> Unit
+        ) : ImagedBottomSheetListItem(nameResId, imageResId, onClick)
+
         data class SelectedItem(
             override val nameResId: Int,
             override val imageResId: Int = R.drawable.baseline_check,

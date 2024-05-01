@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.loodmeet.weatherapp.core.models.Theme
 
 public val DarkColorScheme = darkColorScheme(
     primary = Color(0xFF8ecdff),
@@ -57,11 +58,16 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun ComposeWeatherAppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    theme: Theme = Theme.System,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    val darkTheme = when (theme) {
+        Theme.Light -> false
+        Theme.Dark -> true
+        Theme.System -> isSystemInDarkTheme()
+    }
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current

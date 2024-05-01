@@ -25,6 +25,13 @@
     <string name="location">City</string>
     <string name="saved">Saved</string>
     <string name="close">Close</string>
+    <string name="language_russian">Russian</string>
+    <string name="language_english">English</string>
+
+    <string name="theme">Theme</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_system">System</string>
 
     <string name="country_russia">Russia</string>
     <string name="city_moscow">Moscow</string>
@@ -64,6 +71,7 @@
     <string name="slight_thunderstorm">Slight thunderstorm</string>
     <string name="thunderstorm_with_hail">Thunderstorm with hail</string>
     <string name="unknown" translatable="false">Unknown</string>
+    <string name="language">Language</string>
 
     <string name="error_load">Failed to upload data</string>
     <string name="retry">Retry</string>

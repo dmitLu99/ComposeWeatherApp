@@ -2,6 +2,7 @@ package com.loodmeet.weatherapp.domain.mapper
 
 import com.loodmeet.weatherapp.core.models.Location
 import com.loodmeet.weatherapp.core.models.MeasurementUnitsSet
+import com.loodmeet.weatherapp.core.models.Settings
 import com.loodmeet.weatherapp.core.utils.Temperature
 import com.loodmeet.weatherapp.data.models.response.WeatherResponse
 import com.loodmeet.weatherapp.data.models.response.open_meteo.OpenMeteoWeatherResponse
@@ -15,6 +16,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
+import java.util.Locale
 import javax.inject.Inject
 
 @AppScope
@@ -22,17 +24,19 @@ class OpenMeteoWeatherResponseMapperImpl @Inject constructor() : WeatherResponse
 
     private val dailyResponseFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     private val hourlyResponseFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
-    private val dailyFormatter = DateTimeFormatterBuilder()
-        .appendPattern("EEE, d MMM")
-        .parseDefaulting(ChronoField.YEAR, LocalDate.now().year.toLong())
-        .toFormatter()
-    private val hourlyFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
     override suspend fun map(
         response: OpenMeteoWeatherResponse,
-        measurementUnitsSet: MeasurementUnitsSet,
-        location: Location
+        settings: Settings
     ): List<Weather> =
         withContext(Dispatchers.Default) {
+            val locale = Locale(settings.language.getTag())
+            val dailyFormatter = DateTimeFormatterBuilder()
+                .appendPattern("EEE, d MMM")
+                .parseDefaulting(ChronoField.YEAR, LocalDate.now().year.toLong())
+                .toFormatter(locale)
+            val hourlyFormatter = DateTimeFormatter.ofPattern("HH:mm", locale)
+
             val sunriseTime =
                 LocalDateTime.parse(response.daily.sunrise[0], hourlyResponseFormatter)
             val sunsetTime = LocalDateTime.parse(response.daily.sunset[0], hourlyResponseFormatter)
@@ -81,8 +85,8 @@ class OpenMeteoWeatherResponseMapperImpl @Inject constructor() : WeatherResponse
                             temperature = Temperature(response.hourly.temperature2m[translatedIndex]).getValueAsString()
                         )
                     },
-                    measurementUnitsSet = measurementUnitsSet,
-                    dayLengthIndicator = (sunsetTime.hour + sunsetTime.minute / 60 - sunriseTime.hour - sunriseTime.minute / 60) / location.maxDayLengthInHours.toFloat(),
+                    measurementUnitsSet = settings.measurementUnits,
+                    dayLengthIndicator = (sunsetTime.hour + sunsetTime.minute / 60 - sunriseTime.hour - sunriseTime.minute / 60) / settings.location.maxDayLengthInHours.toFloat(),
                 )
             }
         }

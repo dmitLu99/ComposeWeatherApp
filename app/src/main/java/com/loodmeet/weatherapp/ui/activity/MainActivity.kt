@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.loodmeet.weatherapp.app.appComponent
 import com.loodmeet.weatherapp.ui.navigation.AppNavHost
 import com.loodmeet.weatherapp.ui.theme.ComposeWeatherAppTheme
@@ -21,8 +22,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ComposeWeatherAppTheme {
-                AppNavHost(mainScreenViewModelFactory = mainScreenViewModelFactory)
+            val viewModel = viewModel<MainScreenViewModel>(factory = mainScreenViewModelFactory)
+            val settings = viewModel.getSettingsState().value;
+            ComposeWeatherAppTheme(theme = settings.theme) {
+                AppNavHost(viewModel = viewModel, settings = settings)
             }
         }
     }
