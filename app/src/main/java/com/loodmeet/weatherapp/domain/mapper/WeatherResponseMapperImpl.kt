@@ -17,7 +17,7 @@ import java.time.temporal.ChronoField
 import javax.inject.Inject
 
 @AppScope
-class WeatherResponseMapperImpl @Inject constructor() : WeatherResponseMapper {
+class WeatherResponseMapperImpl @Inject constructor() : WeatherResponseMapper<WeatherResponse> {
 
     private val dailyResponseFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     private val hourlyResponseFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
@@ -38,8 +38,7 @@ class WeatherResponseMapperImpl @Inject constructor() : WeatherResponseMapper {
                 val translatedDailyWeather = TranslatedWeatherCode.fromWeatherCode(daily.weatherCode)
                 Weather(
                     date = dailyFormatter.format(LocalDate.parse(daily.date, dailyResponseFormatter)),
-                    descriptionResId = TranslatedWeatherCode.fromWeatherCode(daily.weatherCode).stringResId,
-                    iconResId = TranslatedWeatherCode.fromWeatherCode(daily.weatherCode).dayImageResId,
+                    translatedDailyWeather = translatedDailyWeather,
                     temperatureMax = Temperature(daily.temperatureMax).getValueAsString(),
                     temperatureMin = Temperature(daily.temperatureMin).getValueAsString(),
                     sunrise = hourlyFormatter.format(LocalDateTime.parse(daily.sunrise, hourlyResponseFormatter)),
@@ -60,8 +59,6 @@ class WeatherResponseMapperImpl @Inject constructor() : WeatherResponseMapper {
                     },
                     measurementUnitsSet = measurementUnitsSet,
                     dayLengthIndicator = daily.dayLengthIndicator,
-                    backgroundId = translatedDailyWeather.backgroundId,
-                    foregroundColorId = translatedDailyWeather.foregroundColorId
                 )
             }
         }

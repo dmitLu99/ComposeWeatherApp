@@ -24,6 +24,7 @@ class MainScreenViewModel(
     private val weatherData: MutableList<Weather> = mutableListOf()
     private val isLoading = mutableStateOf(true)
     private val isError = mutableStateOf(false)
+    private val fromOpenMeteo = mutableStateOf(false)
     private lateinit var location: Location
     private lateinit var measurementUnitsSet: MeasurementUnitsSet
 
@@ -40,13 +41,24 @@ class MainScreenViewModel(
     fun fetchWeather() {
         viewModelScope.launch {
             isLoading.value = true
+
+            var fromOpenMeteoFlag = false;
+            val weather: List<Weather> = try {
+                fetchWeatherUseCase.execute()
+            } catch (e: Exception) {
+                fetchWeatherUseCase.fetchFromOriginal().also {
+                    fromOpenMeteoFlag = true
+                }
+            }
+
             try {
                 location = fetchLocationUseCase.execute()
                 measurementUnitsSet = fetchMeasurementUnitsSet.execute()
                 weatherData.clear()
-                weatherData.addAll(fetchWeatherUseCase.execute())
+                weatherData.addAll(weather)
                 isLoading.value = false
                 isError.value = false
+                fromOpenMeteo.value = fromOpenMeteoFlag;
             } catch (e: Exception) {
                 isLoading.value = false
                 isError.value = true

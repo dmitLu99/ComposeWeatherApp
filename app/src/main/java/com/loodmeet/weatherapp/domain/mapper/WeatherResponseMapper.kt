@@ -5,10 +5,10 @@ import com.loodmeet.weatherapp.core.models.MeasurementUnitsSet
 import com.loodmeet.weatherapp.data.models.response.WeatherResponse
 import com.loodmeet.weatherapp.ui.models.Weather
 
-interface WeatherResponseMapper {
+interface WeatherResponseMapper<Response> {
 
     suspend fun map(
-        response: WeatherResponse,
+        response: Response,
         measurementUnitsSet: MeasurementUnitsSet,
         location: Location
     ): List<Weather>

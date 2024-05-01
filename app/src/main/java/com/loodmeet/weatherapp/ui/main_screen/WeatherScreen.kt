@@ -1,14 +1,11 @@
 package com.loodmeet.weatherapp.ui.main_screen
 
-import android.content.res.Resources.Theme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,8 +17,6 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.RootGroupName
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -30,7 +25,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dmitLugg.weatherapp.R
@@ -97,8 +91,7 @@ fun WeatherCard(modifier: Modifier = Modifier, weather: Weather) {
             Image(
                 modifier = Modifier.blur(radius = 4.dp),
                 contentScale = ContentScale.Crop,
-                painter = painterResource(id = weather.backgroundId),
-//                painter = painterResource(id = R.drawable.sun),
+                painter = painterResource(id = weather.translatedDailyWeather.backgroundId),
                 contentDescription = null
             )
             Column(modifier = Modifier.fillMaxSize()) {
@@ -116,7 +109,7 @@ fun WeatherCard(modifier: Modifier = Modifier, weather: Weather) {
                             contentDescription = null,
                             colorFilter = ColorFilter.tint(
                                 blendMode = BlendMode.Modulate, color = colorResource(
-                                    id = weather.foregroundColorId
+                                    id = weather.translatedDailyWeather.foregroundColorId
                                 )
                             )
                         )
@@ -291,7 +284,7 @@ fun TopDailyWeather(
 ) = with(MaterialTheme.colorScheme) {
     val degree = stringResource(weather.measurementUnitsSet.temperatureUnit.unitResId);
 
-    val foreground = colorResource(id = weather.foregroundColorId)
+    val foreground = colorResource(id = weather.translatedDailyWeather.foregroundColorId)
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
@@ -301,13 +294,13 @@ fun TopDailyWeather(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Image(
-                imageVector = ImageVector.vectorResource(id = weather.iconResId),
+                imageVector = ImageVector.vectorResource(id = weather.translatedDailyWeather.dayImageResId),
                 contentDescription = null,
                 modifier = Modifier.size(iconSize),
                 colorFilter = ColorFilter.tint(blendMode = BlendMode.Modulate, color = foreground)
             )
             Text(
-                text = stringResource(id = weather.descriptionResId),
+                text = stringResource(id = weather.translatedDailyWeather.stringResId),
                 style = MaterialTheme.typography.bodyLarge,
                 color = foreground,
                 textAlign = TextAlign.Center,

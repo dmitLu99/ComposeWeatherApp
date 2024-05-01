@@ -1,11 +1,10 @@
 package com.loodmeet.weatherapp.ui.models
 
 import com.loodmeet.weatherapp.core.models.MeasurementUnitsSet
+import com.loodmeet.weatherapp.domain.mapper.TranslatedWeatherCode
 
 data class Weather(
     val date: String,
-    val descriptionResId: Int,
-    val iconResId: Int,
     val temperatureMax: String,
     val temperatureMin: String,
     val sunrise: String,
@@ -17,6 +16,5 @@ data class Weather(
     val hourlyWeather: List<HourlyWeather>,
     val dayLengthIndicator: Float,
     val measurementUnitsSet: MeasurementUnitsSet,
-    val backgroundId: Int,
-    val foregroundColorId: Int
+    val translatedDailyWeather: TranslatedWeatherCode,
 )

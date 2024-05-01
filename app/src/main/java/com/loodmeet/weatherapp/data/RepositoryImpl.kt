@@ -3,7 +3,6 @@ package com.loodmeet.weatherapp.data
 import android.app.Application
 import android.content.Context
 import android.util.Log
-import androidx.compose.ui.text.toUpperCase
 import com.loodmeet.weatherapp.core.exceptions.RequestExecuteException
 import com.loodmeet.weatherapp.core.exceptions.ResponseIsNotSuccessfulException
 import com.loodmeet.weatherapp.core.models.Location
@@ -12,6 +11,8 @@ import com.loodmeet.weatherapp.core.models.MeasurementUnitsSet
 import com.loodmeet.weatherapp.core.utils.Config
 import com.loodmeet.weatherapp.data.models.request.WeatherRequest
 import com.loodmeet.weatherapp.data.models.response.WeatherResponse
+import com.loodmeet.weatherapp.data.models.response.open_meteo.OpenMeteoWeatherResponse
+import com.loodmeet.weatherapp.data.network.OpenMeteoWeatherService
 import com.loodmeet.weatherapp.data.network.WeatherService
 import com.loodmeet.weatherapp.di.AppScope
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +29,7 @@ const val PREFS_NAME = "com.loodmeet.weatherapp"
 @AppScope
 class RepositoryImpl @Inject constructor(
     private val service: WeatherService,
+    private val openMeteoService: OpenMeteoWeatherService,
     application: Application
 ) : Repository {
 
@@ -89,6 +91,27 @@ class RepositoryImpl @Inject constructor(
                     temperatureUnit = measurementUnitsSet.temperatureUnit.requestName.uppercase(),
                     precipitationUnit = measurementUnitsSet.precipitationUnit.requestName.uppercase()
                 )
+            ).also { retrofitResponse ->
+                if (!retrofitResponse.isSuccessful) {
+                    retrofitResponse.errorBody()?.let { Log.d(Config.LOG.NETWORK_TAG, it.string()) }
+
+                    throw ResponseIsNotSuccessfulException(
+                        message = retrofitResponse.message()
+                    )
+                }
+            }.body()!!
+        } catch (e: Exception) {
+            throw RequestExecuteException(cause = e, message = "Request error")
+        }
+    }
+
+    override suspend fun fetchWeatherFromOpenMeteo(): OpenMeteoWeatherResponse = withContext(Dispatchers.IO) {
+        return@withContext try {
+            openMeteoService.execute(
+                latitude = location.latitude, longitude = location.longitude,
+                windSpeedUnit = measurementUnitsSet.windSpeedUnit.requestName,
+                temperatureUnit = measurementUnitsSet.temperatureUnit.requestName,
+                precipitationUnit = measurementUnitsSet.precipitationUnit.requestName
             ).also { retrofitResponse ->
                 if (!retrofitResponse.isSuccessful) {
                     retrofitResponse.errorBody()?.let { Log.d(Config.LOG.NETWORK_TAG, it.string()) }
