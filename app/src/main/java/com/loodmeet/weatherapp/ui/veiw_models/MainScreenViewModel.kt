@@ -44,19 +44,19 @@ class MainScreenViewModel(
             isLoading.value = true
 
             var fromOpenMeteoFlag = false;
-            val weather: List<Weather> = try {
-                fetchWeatherUseCase.execute()
-            } catch (e: Exception) {
-                fetchWeatherUseCase.fetchFromOriginal().also {
-                    fromOpenMeteoFlag = true
-                }
-            }
 
             try {
-                location = fetchLocationUseCase.execute()
-                measurementUnitsSet = fetchMeasurementUnitsSet.execute()
+                val weather: List<Weather> = try {
+                    fetchWeatherUseCase.execute()
+                } catch (e: Exception) {
+                    fetchWeatherUseCase.fetchFromOriginal().also {
+                        fromOpenMeteoFlag = true
+                    }
+                }
                 weatherData.clear()
                 weatherData.addAll(weather)
+                location = fetchLocationUseCase.execute()
+                measurementUnitsSet = fetchMeasurementUnitsSet.execute()
                 isLoading.value = false
                 isError.value = false
                 fromOpenMeteo.value = fromOpenMeteoFlag;
