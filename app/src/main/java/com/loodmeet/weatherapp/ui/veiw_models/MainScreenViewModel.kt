@@ -30,6 +30,7 @@ class MainScreenViewModel(
 
     fun getWeatherData(): List<Weather> = weatherData
     fun getIsLoading(): State<Boolean> = isLoading
+    fun getIsFromOpenMeteo(): State<Boolean> = fromOpenMeteo
     fun getIsError(): State<Boolean> = isError
     fun getMeasurementUnitsSet(): MeasurementUnitsSet = measurementUnitsSet
     fun getLocation(): Location = location
@@ -63,7 +64,6 @@ class MainScreenViewModel(
                 isLoading.value = false
                 isError.value = true
             }
-
         }
     }
 

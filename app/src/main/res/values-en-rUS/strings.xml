@@ -67,4 +67,5 @@
 
     <string name="error_load">Failed to upload data</string>
     <string name="retry">Retry</string>
+    <string name="value_from_open_meteo">The server is unavailable, weather data was obtained from the Open Meteo website</string>
 </resources>

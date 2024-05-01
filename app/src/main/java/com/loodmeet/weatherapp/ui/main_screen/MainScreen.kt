@@ -38,46 +38,65 @@ import com.loodmeet.weatherapp.ui.veiw_models.MainScreenViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.viewModelScope
 import com.loodmeet.weatherapp.core.models.Location
 import com.loodmeet.weatherapp.ui.models.Weather
 
 @Preview
 @Composable
-fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
+fun MainScreen(viewModel: MainScreenViewModel = viewModel()): Unit =
+    with(MaterialTheme.colorScheme) {
+        val snackbarHostState = remember { SnackbarHostState() }
+        Scaffold(
+            snackbarHost = {
+                SnackbarHost(
+                    snackbarHostState,
+                    modifier = Modifier.background(background)
+                )
+            },
+            backgroundColor = background
+        ) { padding ->
 
-    if (viewModel.getIsLoading().value) {
-        Loading()
-    } else if (viewModel.getIsError().value) {
-        Error(viewModel)
-    } else {
-        MainView(weatherList = viewModel.getWeatherData())
-    }
-}
-
-@Composable
-fun Error(viewModel: MainScreenViewModel = viewModel()): Unit = with(MaterialTheme.colorScheme) {
-
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState, modifier = Modifier.background(background)) },
-        backgroundColor = background
-    ) { padding ->
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            IconButton(
-                modifier = Modifier.padding(padding),
-                onClick = viewModel::fetchWeather) {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = null,
-                    tint = surfaceTint,
-                    modifier = Modifier.size(56.dp)
+            if (viewModel.getIsLoading().value) {
+                Loading()
+            } else if (viewModel.getIsError().value) {
+                Error(
+                    viewModel = viewModel,
+                    modifier = Modifier.padding(padding),
+                    snackbarHostState = snackbarHostState
+                )
+            } else {
+                MainView(
+                    modifier = Modifier.padding(padding),
+                    weatherList = viewModel.getWeatherData(),
+                    snackbarHostState = snackbarHostState
                 )
             }
+        }
+    }
+
+@Composable
+fun Error(
+    viewModel: MainScreenViewModel = viewModel(),
+    modifier: Modifier = Modifier, snackbarHostState: SnackbarHostState
+): Unit = with(MaterialTheme.colorScheme) {
+    val scope = rememberCoroutineScope()
+
+
+    Row(
+        modifier = modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        IconButton(
+            onClick = viewModel::fetchWeather
+        ) {
+            Icon(
+                imageVector = Icons.Default.Refresh,
+                contentDescription = null,
+                tint = surfaceTint,
+                modifier = Modifier.size(56.dp)
+            )
         }
     }
 
@@ -111,9 +130,28 @@ fun Loading() = with(MaterialTheme.colorScheme) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MainView(viewModel: MainScreenViewModel = viewModel(), weatherList: List<Weather>) =
+fun MainView(
+    modifier: Modifier = Modifier,
+    viewModel: MainScreenViewModel = viewModel(),
+    weatherList: List<Weather>,
+    snackbarHostState: SnackbarHostState,
+) =
     with(MaterialTheme.colorScheme) {
+        if (viewModel.getIsFromOpenMeteo().value) {
+            val context = LocalContext.current
 
+            viewModel.viewModelScope.launch {
+                val result = snackbarHostState.showSnackbar(
+                    message = context.getString(R.string.value_from_open_meteo),
+                    withDismissAction = true,
+                    duration = SnackbarDuration.Long
+                )
+                when (result) {
+                    SnackbarResult.Dismissed -> {}
+                    else -> {}
+                }
+            }
+        }
         val tabs = listOf(
             MainScreenTabItem(weatherList[0].date) { WeatherScreen(weatherList[0]) },
             MainScreenTabItem(weatherList[1].date) { WeatherScreen(weatherList[1]) },
@@ -250,7 +288,8 @@ fun MainView(viewModel: MainScreenViewModel = viewModel(), weatherList: List<Wea
                 )
             },
             sheetShape = roundedShape,
-            sheetState = mainModalBottomSheetState
+            sheetState = mainModalBottomSheetState,
+            modifier = modifier
         ) {
             ModalBottomSheetLayout(
                 sheetBackgroundColor = background,

@@ -66,4 +66,5 @@
 
     <string name="error_load">Не удалось загрузить данные</string>
     <string name="retry">Попробовать снова</string>
+    <string name="value_from_open_meteo">Сервер недоступен, погодные данные были получены с сайта Open Meteo</string>
 </resources>
