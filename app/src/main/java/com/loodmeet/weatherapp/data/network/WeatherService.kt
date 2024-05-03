@@ -12,7 +12,10 @@ import retrofit2.http.Query
 
 interface WeatherService {
 
-    @POST("forecast") suspend fun execute(
-       @Body request: WeatherRequest
+    @GET("forecast") suspend fun execute(
+        @Query("location") location: String,
+        @Query("windSpeedUnit") windSpeedUnit: String,
+        @Query("temperatureUnit") temperatureUnit: String,
+        @Query("precipitationUnit") precipitationUnit: String,
     ): Response<WeatherResponse>
 }

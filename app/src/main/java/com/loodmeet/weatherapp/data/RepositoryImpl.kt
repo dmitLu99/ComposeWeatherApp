@@ -45,7 +45,6 @@ class RepositoryImpl @Inject constructor(
         theme = Theme.System
     )
 
-    //    private var measurementUnitsSet: MeasurementUnitsSet = MeasurementUnitsSet()
     private var prefs =
         application.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
@@ -53,12 +52,10 @@ class RepositoryImpl @Inject constructor(
     override suspend fun fetchWeather(): WeatherResponse = withContext(Dispatchers.IO) {
         return@withContext try {
             service.execute(
-                WeatherRequest(
-                    location = settings.location.javaClass.simpleName.uppercase(Locale.ROOT),
-                    windSpeedUnit = settings.measurementUnits.windSpeedUnit.requestName.uppercase(),
-                    temperatureUnit = settings.measurementUnits.temperatureUnit.requestName.uppercase(),
-                    precipitationUnit = settings.measurementUnits.precipitationUnit.requestName.uppercase()
-                )
+                location = settings.location.javaClass.simpleName.uppercase(Locale.ROOT),
+                windSpeedUnit = settings.measurementUnits.windSpeedUnit.requestName.uppercase(),
+                precipitationUnit = settings.measurementUnits.precipitationUnit.requestName.uppercase(),
+                temperatureUnit = settings.measurementUnits.temperatureUnit.requestName.uppercase()
             ).also { retrofitResponse ->
                 if (!retrofitResponse.isSuccessful) {
                     retrofitResponse.errorBody()?.let { Log.d(Config.LOG.NETWORK_TAG, it.string()) }
